@@ -469,7 +469,9 @@ function selServicio(el){
     document.getElementById('precioFormServicio').textContent=p.nombre;
     document.getElementById('precioFormTipo').textContent=p.tipo+' · '+p.barbero;
     document.getElementById('precioFormNum').textContent='$'+p.precio.toLocaleString('es-AR');
-    document.getElementById('precioFormBox').style.display='flex';
+    const box=document.getElementById('precioFormBox');
+    box.style.display='flex';
+    box.scrollIntoView({behavior:'smooth',block:'nearest'});
   }
 }
 
@@ -503,7 +505,7 @@ function buildMsgPerdido(c){
 }
 
 // ══ AGREGAR CLIENTE ══
-async function agregarCliente(){
+function agregarCliente(){
   const nombre=document.getElementById('fNombre').value.trim();
   const tel=document.getElementById('fTel').value.trim().replace(/\D/g,'');
   if(!nombre){alert('Ingresá el nombre.');return}
@@ -511,7 +513,7 @@ async function agregarCliente(){
   const hoy=hoyStr(),id=Date.now();
   const servicio=document.getElementById('fServicio').value;
   const precio=getPrecio(servicio);
-  clientes.unshift({id,nombre,tel,
+  const nuevo={id,nombre,tel,
     email:document.getElementById('fEmail').value.trim(),
     insta:document.getElementById('fInsta').value.trim(),
     barbero:document.getElementById('fBarbero').value,
@@ -519,14 +521,18 @@ async function agregarCliente(){
     servicio,cortes:1,
     visitas:[hoy],
     precios:[{fecha:hoy,precio,servicio}],
-    creado:hoy});
-  await saveCliente(clientes[0]);
+    creado:hoy};
+  clientes.unshift(nuevo);
+  save();
+  guardarEnNube(nuevo).then(()=>ocultarSync()).catch(e=>console.error(e));
+  mostrarSync('☁️ Guardando...');
   ['fNombre','fTel','fEmail','fInsta'].forEach(f=>document.getElementById(f).value='');
   document.getElementById('fBarbero').value='';
   document.getElementById('fServicio').value='';
   document.getElementById('precioFormBox').style.display='none';
-  actualizarServiciosForm();
-  renderAll();abrirModal(id,false,false);
+  document.querySelectorAll('.srv-opt').forEach(e=>e.classList.remove('selected'));
+  renderAll();
+  abrirModal(id,false,false);
 }
 
 // ══ SUMAR CORTE ══
@@ -536,7 +542,7 @@ function sumarCorte(id){
   abrirModal(id,false,true);
 }
 
-async function confirmarCorte(id,servId){
+function confirmarCorte(id,servId){
   const c=clientes.find(x=>x.id===id);if(!c)return;
   c.cortes++;
   const hoy=hoyStr();
@@ -546,7 +552,10 @@ async function confirmarCorte(id,servId){
     if(!c.precios)c.precios=[];
     c.precios.push({fecha:hoy,precio:getPrecio(servId),servicio:servId});
   }
-  await saveCliente(c);renderAll();
+  save();
+  mostrarSync('☁️ Guardando...');
+  guardarEnNube(c).then(()=>ocultarSync()).catch(e=>console.error(e));
+  renderAll();
   // Build message and open WhatsApp directly
   const msg=buildMsgCorte(c);
   const tel=c.tel.startsWith('54')?c.tel:'549'+c.tel;
@@ -616,7 +625,8 @@ function eliminarCliente(id){
   if(!confirm('¿Eliminar este cliente?'))return;
   clientes=clientes.filter(x=>x.id!==id);
   save();closeModal();renderAll();
-  mostrarSync('🗑 Eliminando...');await eliminarDeNube(id);ocultarSync();
+  mostrarSync('🗑 Eliminando...');
+  eliminarDeNube(id).then(()=>ocultarSync()).catch(e=>console.error(e));
 }
 
 // ══ NAV ══
