@@ -32,13 +32,11 @@ input:focus,select:focus{border-color:var(--gold)}
 select option{background:#111}
 .btn-add{width:100%;background:var(--gold);color:var(--black);border:none;border-radius:8px;padding:13px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .2s}
 .btn-add:hover{background:var(--gold2)}
-/* PRECIO BOX */
 .precio-box{background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.25);border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .precio-box-num{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);line-height:1}
 .precio-box-info{flex:1}
 .precio-box-servicio{font-size:13px;font-weight:700;color:var(--white)}
 .precio-box-tipo{font-size:10px;color:var(--gray);letter-spacing:1px;margin-top:2px}
-/* TABLA PRECIOS */
 .tabla-precios{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:12px}
 .tabla-precios th{font-size:9px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--border);text-align:left}
 .tabla-precios td{padding:10px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--white)}
@@ -48,7 +46,6 @@ select option{background:#111}
 .tag-llegada{background:rgba(255,255,255,.07);color:var(--gray)}
 .tag-turno{background:rgba(212,175,55,.15);color:var(--gold)}
 .tag-ivo{background:rgba(126,200,227,.12);color:var(--diamante)}
-/* SEARCH */
 .search-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .search-bar input{flex:1;min-width:140px}
 .btn-filter{background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--gray);padding:10px 12px;font-size:10px;font-family:'Montserrat',sans-serif;letter-spacing:1px;cursor:pointer;transition:all .2s;white-space:nowrap}
@@ -115,7 +112,6 @@ select option{background:#111}
 .btn-wsp:hover{filter:brightness(1.1)}
 .btn-del{width:100%;margin-top:8px;background:none;border:1px solid #333;color:var(--gray);border-radius:8px;padding:9px;font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:1px;cursor:pointer;transition:all .2s}
 .btn-del:hover{border-color:var(--red);color:var(--red)}
-/* MODAL PRECIO */
 .modal-precio-selector{margin-bottom:14px}
 .mps-title{font-size:10px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:8px}
 .mps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
@@ -141,6 +137,27 @@ select option{background:#111}
 .srv-opt.selected{border-color:var(--gold);background:rgba(212,175,55,.12)}
 .srv-opt-precio{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);line-height:1}
 .srv-opt-nombre{font-size:10px;color:var(--gray);margin-top:4px;letter-spacing:.5px;line-height:1.3}
+/* ── FINANZAS ── */
+.fin-top-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:0}
+@media(min-width:600px){.fin-top-grid{grid-template-columns:1fr 1fr}}
+.fin-form{display:flex;flex-direction:column;gap:10px}
+.fin-row{display:flex;gap:10px}
+.fin-resumen-card{display:flex;flex-direction:column}
+.fin-kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1}
+.fin-kpi{background:#0d0d0d;border-radius:10px;padding:14px 12px;text-align:center}
+.fin-kpi-full{grid-column:span 2;border:1px solid var(--border)}
+.fin-kpi-val{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1}
+.fin-kpi-lbl{font-size:9px;letter-spacing:1.5px;color:var(--gray);text-transform:uppercase;margin-top:4px}
+.verde{color:var(--gold)}
+.rojo{color:var(--gold)}
+.fin-bloque-titulo{font-size:9px;letter-spacing:3px;color:var(--gray);text-transform:uppercase;margin-bottom:8px}
+.fin-gasto-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 16px;display:flex;align-items:center;gap:12px;transition:border-color .2s}
+.fin-gasto-item:hover{border-color:var(--gray2)}
+.fin-gi-desc{flex:1;font-size:13px;font-weight:600;color:var(--white)}
+.fin-gi-fecha{font-size:11px;color:var(--gray)}
+.fin-gi-monto{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);margin-left:8px}
+.fin-gi-del{background:none;border:none;color:var(--gray);cursor:pointer;font-size:14px;padding:4px 6px;transition:color .2s;border-radius:6px}
+.fin-gi-del:hover{color:#c0392b}
 @media(max-width:400px){.srv-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.form-grid{grid-template-columns:1fr}.barb-grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.client-card{flex-wrap:wrap}.client-actions{width:100%;justify-content:flex-end}.mps-grid{grid-template-columns:1fr}}
 </style>
@@ -154,6 +171,7 @@ select option{background:#111}
   <button class="nav-tab" onclick="showPage('ranking',this)">Ranking</button>
   <button class="nav-tab" onclick="showPage('barberos',this)">Barberos</button>
   <button class="nav-tab" onclick="showPage('perdidos',this)" id="tabPerdidos">Perdidos</button>
+  <button class="nav-tab" onclick="showPage('finanzas',this)">💰 Finanzas</button>
 </div>
 
 <!-- ══ CLIENTES ══ -->
@@ -178,7 +196,6 @@ select option{background:#111}
         </select>
       </div>
     </div>
-    <!-- SELECTOR VISUAL DE SERVICIO -->
     <input type="hidden" id="fServicio" value="">
     <input type="hidden" id="fTurno" value="llegada">
     <div class="srv-selector">
@@ -197,7 +214,6 @@ select option{background:#111}
           <div class="srv-opt-nombre">Corte + Barba</div>
         </div>
       </div>
-
       <div class="srv-sector-title" style="margin-top:16px"><span class="srv-sector-badge badge-turno">🗓 CON TURNO — GONZA / BRUNO</span></div>
       <div class="srv-grid">
         <div class="srv-opt" data-id="corte_turno_gb" data-turno="turno" onclick="selServicio(this)">
@@ -209,7 +225,6 @@ select option{background:#111}
           <div class="srv-opt-nombre">Corte + Barba</div>
         </div>
       </div>
-
       <div class="srv-sector-title" style="margin-top:16px"><span class="srv-sector-badge badge-ivo">💎 CON TURNO — IVO</span></div>
       <div class="srv-grid">
         <div class="srv-opt" data-id="corte_ivo" data-turno="turno" onclick="selServicio(this)">
@@ -308,13 +323,89 @@ select option{background:#111}
   <div id="perdidosList" class="clients-list"></div>
 </div>
 
+<!-- ══ FINANZAS ══ -->
+<div class="page" id="pageFinanzas">
+  <div style="height:20px"></div>
+  <div class="fin-top-grid">
+    <!-- CARGAR GASTO -->
+    <div class="form-card">
+      <div class="sec-title">Registrar Gasto</div>
+      <div class="fin-form">
+        <div class="form-group">
+          <label>Descripción</label>
+          <input type="text" id="gDesc" placeholder="Ej: productos, alquiler, luz…" maxlength="80">
+        </div>
+        <div class="fin-row">
+          <div class="form-group" style="flex:1">
+            <label>Monto $</label>
+            <input type="number" id="gMonto" placeholder="0" min="0" step="100">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>Fecha</label>
+            <input type="date" id="gFecha" style="color-scheme:dark">
+          </div>
+        </div>
+        <button class="btn-add" onclick="guardarGasto()">✦ &nbsp;GUARDAR GASTO</button>
+        <p id="gMsg" style="font-size:11px;color:var(--gray);min-height:16px;margin-top:4px;letter-spacing:1px"></p>
+      </div>
+    </div>
+    <!-- RESUMEN RÁPIDO -->
+    <div class="form-card fin-resumen-card">
+      <div class="sec-title">Resumen Rápido</div>
+      <div class="fin-kpi-grid">
+        <div class="fin-kpi">
+          <div class="fin-kpi-val verde" id="rqIngSem">$0</div>
+          <div class="fin-kpi-lbl">Ingresos semana</div>
+        </div>
+        <div class="fin-kpi">
+          <div class="fin-kpi-val rojo" id="rqGastoSem">$0</div>
+          <div class="fin-kpi-lbl">Gastos semana</div>
+        </div>
+        <div class="fin-kpi fin-kpi-full">
+          <div class="fin-kpi-val" id="rqNetaSem">$0</div>
+          <div class="fin-kpi-lbl">Ganancia neta semana</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ESTADÍSTICAS -->
+  <div class="sec-title" style="margin-top:8px">Estadísticas Financieras</div>
+  <div class="form-card" style="margin-bottom:20px">
+    <div class="week-nav" style="margin-bottom:16px">
+      <button onclick="finCambiarSemana(-1)">◀</button>
+      <div class="week-label" id="finWeekLabel">Esta semana</div>
+      <button onclick="finCambiarSemana(1)">▶</button>
+    </div>
+    <div class="fin-bloque-titulo">SEMANA</div>
+    <div class="stats" style="margin-bottom:12px">
+      <div class="stat"><div class="stat-num verde" id="fIngSem">$0</div><div class="stat-lbl">Ingresos</div></div>
+      <div class="stat"><div class="stat-num rojo" id="fGastoSem">$0</div><div class="stat-lbl">Gastos</div></div>
+      <div class="stat" style="grid-column:span 2;border-top:1px solid var(--border)">
+        <div class="stat-num" id="fNetaSem">$0</div><div class="stat-lbl">Ganancia neta</div>
+      </div>
+    </div>
+    <div style="height:1px;background:var(--border);margin:16px 0"></div>
+    <div class="fin-bloque-titulo">ESTE MES</div>
+    <div class="stats" style="margin-bottom:0">
+      <div class="stat"><div class="stat-num verde" id="fIngMes">$0</div><div class="stat-lbl">Ingresos</div></div>
+      <div class="stat"><div class="stat-num rojo" id="fGastoMes">$0</div><div class="stat-lbl">Gastos</div></div>
+      <div class="stat" style="grid-column:span 2;border-top:1px solid var(--border)">
+        <div class="stat-num" id="fNetaMes">$0</div><div class="stat-lbl">Ganancia neta</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">Últimos Gastos</div>
+  <div id="listaGastos" class="clients-list"></div>
+</div>
+
 <!-- ══ MODAL ══ -->
 <div class="modal-overlay" id="modalWsp">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div class="modal-title" id="modalTitle">MENSAJE LISTO</div>
     <div class="modal-name" id="modalNombre"></div>
-    <!-- SELECTOR DE PRECIO AL SUMAR CORTE -->
     <div id="modalPrecioSelector" class="modal-precio-selector" style="display:none">
       <div class="mps-title">¿Qué servicio hizo hoy?</div>
       <div class="mps-grid" id="mpsGrid"></div>
@@ -345,26 +436,17 @@ const PRECIOS = [
 ];
 
 function getPreciosParaBarbero(barbero, turno){
-  if(barbero==='Ivo'){
-    return PRECIOS.filter(p=>p.barbero==='Ivo'||p.barbero==='todos');
-  }
+  if(barbero==='Ivo') return PRECIOS.filter(p=>p.barbero==='Ivo'||p.barbero==='todos');
   if(barbero==='Gonza'||barbero==='Bruno'){
     if(turno==='turno') return PRECIOS.filter(p=>p.barbero==='Gonza/Bruno'||p.barbero==='todos');
     return PRECIOS.filter(p=>p.barbero==='todos');
   }
-  // sin asignar
   if(turno==='turno') return PRECIOS.filter(p=>p.barbero!=='Ivo');
   return PRECIOS.filter(p=>p.barbero==='todos');
 }
 
-function getPrecio(servId){
-  const p=PRECIOS.find(x=>x.id===servId);
-  return p?p.precio:0;
-}
-
-function precioDeCliente(c){
-  return getPrecio(c.servicio)||14000;
-}
+function getPrecio(servId){ const p=PRECIOS.find(x=>x.id===servId); return p?p.precio:0; }
+function precioDeCliente(c){ return getPrecio(c.servicio)||14000; }
 
 // ══ STORAGE & SUPABASE ══
 const KEY='bressati_clientes_v3';
@@ -376,9 +458,10 @@ function save(){localStorage.setItem(KEY,JSON.stringify(clientes))}
 
 async function sbFetch(path,opts){
   opts=opts||{};
+  const baseHeaders={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
   const r=await fetch(SB_URL+'/rest/v1/'+path,{
     method:opts.method||'GET',
-    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+    headers:{...baseHeaders,...(opts.headers||{})},
     body:opts.body||undefined
   });
   if(!r.ok){console.error('SB:',await r.text());return null;}
@@ -386,30 +469,23 @@ async function sbFetch(path,opts){
 }
 
 async function cargarDesdeNube(){
-  mostrarSync('☁️ Cargando datos de la nube...');
+  // Mostrar local inmediatamente (sin esperar la nube)
+  if(clientes.length>0) renderAll();
+  // Sincronizar con Supabase en segundo plano
   const data=await sbFetch('clientes?order=creado.desc&limit=1000');
   if(data&&data.length>=0){clientes=data;localStorage.setItem(KEY,JSON.stringify(clientes));}
-  ocultarSync();renderAll();
+  renderAll();
 }
 
 async function guardarEnNube(c){
-  const existe=await sbFetch('clientes?id=eq.'+c.id);
-  if(existe&&existe.length>0){
-    await sbFetch('clientes?id=eq.'+c.id,{method:'PATCH',body:JSON.stringify({nombre:c.nombre,tel:c.tel,email:c.email||'',insta:c.insta||'',barbero:c.barbero||'',turno:c.turno||'llegada',servicio:c.servicio||'',cortes:c.cortes,visitas:c.visitas||[],precios:c.precios||[]})});
-  }else{
-    await sbFetch('clientes',{method:'POST',body:JSON.stringify(c)});
-  }
+  await sbFetch("clientes?on_conflict=id",{method:"POST",headers:{"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(c)});
 }
 
-async function eliminarDeNube(id){
-  await sbFetch('clientes?id=eq.'+id,{method:'DELETE'});
-}
+async function eliminarDeNube(id){ await sbFetch('clientes?id=eq.'+id,{method:'DELETE'}); }
 
 async function saveCliente(c){
-  save();
-  mostrarSync('☁️ Guardando en la nube...');
-  await guardarEnNube(c);
-  ocultarSync();
+  save();mostrarSync('☁️ Guardando en la nube...');
+  await guardarEnNube(c);ocultarSync();
 }
 
 function mostrarSync(msg){
@@ -456,12 +532,10 @@ function vxSem(c,off=0){
   return(c.visitas||[]).filter(v=>v>=i&&v<=f).length;
 }
 
-// ══ FORM: ACTUALIZAR OPCIONES DE SERVICIO ══
 function selServicio(el){
   document.querySelectorAll('.srv-opt').forEach(e=>e.classList.remove('selected'));
   el.classList.add('selected');
-  const id=el.dataset.id;
-  const turno=el.dataset.turno;
+  const id=el.dataset.id,turno=el.dataset.turno;
   document.getElementById('fServicio').value=id;
   document.getElementById('fTurno').value=turno;
   const p=PRECIOS.find(x=>x.id===id);
@@ -478,10 +552,8 @@ function selServicio(el){
 function actualizarServiciosForm(){}
 function mostrarPrecioForm(){}
 
-// ══ MENSAJES ══
 function buildMsgCorte(c){
   const r=getRango(c.cortes),n=c.nombre.split(' ')[0];
-  const p=PRECIOS.find(x=>x.id===c.servicio);
   let m=`✂️ Hola ${n}!\nGracias por venir hoy a *Barber Studio Bressati*.\n\n`;
   m+=`✂️ Ya llevás *${c.cortes} corte${c.cortes!==1?'s':''}* con nosotros.\n`;
   m+=`Nivel: ${r.emoji} *${r.nombre}*`;
@@ -504,7 +576,6 @@ function buildMsgPerdido(c){
   return m;
 }
 
-// ══ AGREGAR CLIENTE ══
 function agregarCliente(){
   const nombre=document.getElementById('fNombre').value.trim();
   const tel=document.getElementById('fTel').value.trim().replace(/\D/g,'');
@@ -535,12 +606,7 @@ function agregarCliente(){
   abrirModal(id,false,false);
 }
 
-// ══ SUMAR CORTE ══
-function sumarCorte(id){
-  const c=clientes.find(x=>x.id===id);if(!c)return;
-  // Abrir modal con selector de precio
-  abrirModal(id,false,true);
-}
+function sumarCorte(id){ const c=clientes.find(x=>x.id===id);if(!c)return; abrirModal(id,false,true); }
 
 function confirmarCorte(id,servId){
   const c=clientes.find(x=>x.id===id);if(!c)return;
@@ -556,7 +622,6 @@ function confirmarCorte(id,servId){
   mostrarSync('☁️ Guardando...');
   guardarEnNube(c).then(()=>ocultarSync()).catch(e=>console.error(e));
   renderAll();
-  // Build message and open WhatsApp directly
   const msg=buildMsgCorte(c);
   const tel=c.tel.startsWith('54')?c.tel:'549'+c.tel;
   const url='https://wa.me/'+tel+'?text='+encodeURIComponent(msg).replace(/%20/g,'+');
@@ -564,7 +629,6 @@ function confirmarCorte(id,servId){
   closeModal();
 }
 
-// ══ MODAL ══
 function abrirModal(id,perdido,mostrarSelector){
   const c=clientes.find(x=>x.id===id);if(!c)return;
   const msg=perdido?buildMsgPerdido(c):buildMsgCorte(c);
@@ -574,16 +638,12 @@ function abrirModal(id,perdido,mostrarSelector){
   document.getElementById('modalMsg').textContent=msg;
   document.getElementById('modalWspBtn').href='https://wa.me/'+tel+'?text='+encodeURIComponent(msg).replace(/%20/g,'+');
   document.getElementById('modalDelBtn').onclick=()=>eliminarCliente(id);
-
-  // Selector de precio
   const sel=document.getElementById('modalPrecioSelector');
   document.getElementById('modalWspBtn').style.display=mostrarSelector?'none':'flex';
   document.getElementById('modalHistSection').style.display=mostrarSelector?'none':'block';
   document.getElementById('modalDelBtn').style.display=mostrarSelector?'none':'block';
   if(mostrarSelector){
     sel.style.display='block';
-    const opciones=getPreciosParaBarbero(c.barbero,c.turno||'llegada');
-    // Group by sector
     const grupos=[
       {label:'📋 ORDEN DE LLEGADA', badge:'badge-llegada', items:PRECIOS.filter(p=>p.tipo==='Orden llegada')},
       {label:'🗓 CON TURNO — GONZA / BRUNO', badge:'badge-turno', items:PRECIOS.filter(p=>p.barbero==='Gonza/Bruno')},
@@ -599,8 +659,6 @@ function abrirModal(id,perdido,mostrarSelector){
   } else {
     sel.style.display='none';
   }
-
-  // Historial
   const hist=[...(c.visitas||[])].reverse().slice(0,20);
   const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   document.getElementById('modalHistorial').innerHTML=hist.length
@@ -615,7 +673,6 @@ function abrirModal(id,perdido,mostrarSelector){
         </div>`;
       }).join('')
     :'<div style="font-size:11px;color:var(--gray);padding:8px">Sin visitas aún</div>';
-
   document.getElementById('modalWsp').classList.add('open');
 }
 
@@ -639,6 +696,7 @@ function showPage(p,btn){
   if(p==='barberos')renderBarberos();
   if(p==='perdidos')renderPerdidos();
   if(p==='precios')renderPrecios();
+  if(p==='finanzas')initFinanzas(); // ← FINANZAS
 }
 
 function setFiltro(f){
@@ -652,7 +710,6 @@ function setFiltro(f){
 
 function cambiarSemana(d){semOff+=d;if(semOff>0)semOff=0;renderBarberos()}
 
-// ══ RENDER STATS ══
 function renderStats(){
   const hoy=hoyStr(),[ini]=getWeekRange(0);
   document.getElementById('statTotal').textContent=clientes.length;
@@ -663,7 +720,6 @@ function renderStats(){
   document.getElementById('tabPerdidos').textContent=nP>0?`Perdidos (${nP})`:'Perdidos';
 }
 
-// ══ RENDER CLIENTES ══
 function renderClientes(){
   const q=document.getElementById('searchInput').value.toLowerCase(),hoy=hoyStr();
   let lista=clientes.filter(c=>{
@@ -680,7 +736,6 @@ function renderClientes(){
     const diasTxt=dias===null?'':dias===0?'🟢 Hoy':`${dias}d sin venir`;
     const diasCls=dias===null?'':dias===0?'days-ok':dias>15?'days-alert':dias>7?'days-warn':'';
     const vm=vxMes(c),perdido=(dias||0)>15;
-    const precioActual=precioDeCliente(c);
     const pInfo=PRECIOS.find(x=>x.id===c.servicio);
     return`<div class="client-card${perdido?' perdido':''}">
       <div class="client-avatar ${r.cls}">${ini}</div>
@@ -706,7 +761,6 @@ function renderClientes(){
   }).join('');
 }
 
-// ══ RENDER PRECIOS ══
 function renderPrecios(){
   const hoy=hoyStr();
   const ing=clientes.filter(c=>c.visitas&&c.visitas.includes(hoy))
@@ -717,7 +771,6 @@ function renderPrecios(){
   document.getElementById('ingresoHoy').textContent='$'+ing.toLocaleString('es-AR');
 }
 
-// ══ RENDER RANKING ══
 function renderRanking(){
   const n=new Date(),m=n.getMonth(),y=n.getFullYear();
   const porMes=[...clientes].map(c=>({...c,vm:(c.visitas||[]).filter(v=>{const d=new Date(v);return d.getMonth()===m&&d.getFullYear()===y}).length})).sort((a,b)=>b.vm-a.vm).filter(c=>c.vm>0).slice(0,10);
@@ -735,7 +788,6 @@ function renderRanking(){
   document.getElementById('rankingTotal').innerHTML=mkList(porTot,'cortes','CORTES');
 }
 
-// ══ RENDER BARBEROS ══
 function renderBarberos(){
   document.getElementById('weekLabel').textContent=weekLabel(semOff);
   const barberos=['Ivo','Gonza','Bruno'];
@@ -776,7 +828,6 @@ function renderBarberos(){
   document.getElementById('bgIngMes').textContent='$'+Math.round(ingM/1000)+'k';
 }
 
-// ══ RENDER PERDIDOS ══
 function renderPerdidos(){
   const lista=clientes.filter(c=>(diasDesde(c)||0)>15).sort((a,b)=>(diasDesde(b)||0)-(diasDesde(a)||0));
   document.getElementById('perdidosCount').textContent=lista.length;
@@ -810,6 +861,162 @@ function renderPerdidos(){
 function renderAll(){renderStats();renderClientes()}
 cargarDesdeNube();
 document.getElementById('modalWsp').addEventListener('click',function(e){if(e.target===this)closeModal()});
+
+// ══ MÓDULO FINANZAS ══
+let finSemOff = 0;
+
+function finGetWeekRange(off=0){
+  const d=new Date(),day=d.getDay(),lu=new Date(d);
+  lu.setDate(d.getDate()-(day===0?6:day-1)+off*7);lu.setHours(0,0,0,0);
+  const sa=new Date(lu);sa.setDate(lu.getDate()+6);
+  return[lu.toISOString().split('T')[0],sa.toISOString().split('T')[0]];
+}
+
+function finWeekLabel(off){
+  if(off===0)return'Esta semana';if(off===-1)return'Semana pasada';
+  const[ini,fin]=finGetWeekRange(off);
+  const di=new Date(ini),df=new Date(fin);
+  const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return`${di.getDate()} ${ms[di.getMonth()]} – ${df.getDate()} ${ms[df.getMonth()]}`;
+}
+
+function formatARS(n){
+  const abs=Math.abs(Math.round(n));
+  return(n<0?'-':'')+' $'+abs.toLocaleString('es-AR');
+}
+
+function calcIngresosSemana(off=0){
+  const[ini,fin]=finGetWeekRange(off);
+  return clientes.reduce((total,c)=>{
+    const ps=(c.precios||[]).filter(p=>p.fecha>=ini&&p.fecha<=fin);
+    return total+ps.reduce((s,p)=>s+(p.precio||0),0);
+  },0);
+}
+
+function calcIngresosMes(){
+  const n=new Date(),m=n.getMonth(),y=n.getFullYear();
+  return clientes.reduce((total,c)=>{
+    const ps=(c.precios||[]).filter(p=>{const d=new Date(p.fecha);return d.getMonth()===m&&d.getFullYear()===y});
+    return total+ps.reduce((s,p)=>s+(p.precio||0),0);
+  },0);
+}
+
+async function getGastosSemana(off=0){
+  const[ini,fin]=finGetWeekRange(off);
+  try{
+    const data=await sbFetch('gastos?fecha=gte.'+ini+'&fecha=lte.'+fin+'&select=monto');
+    if(!data)return 0;
+    return data.reduce((s,g)=>s+(parseFloat(g.monto)||0),0);
+  }catch{return 0;}
+}
+
+async function getGastosMes(){
+  const n=new Date();
+  const ini=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-01';
+  const last=new Date(n.getFullYear(),n.getMonth()+1,0);
+  const fin=last.toISOString().split('T')[0];
+  try{
+    const data=await sbFetch('gastos?fecha=gte.'+ini+'&fecha=lte.'+fin+'&select=monto');
+    if(!data)return 0;
+    return data.reduce((s,g)=>s+(parseFloat(g.monto)||0),0);
+  }catch{return 0;}
+}
+
+function pintarVal(id,val){
+  const el=document.getElementById(id);if(!el)return;
+  el.textContent=formatARS(val);
+  el.className=el.className.replace(/\b(verde|rojo)\b/g,'').trim();
+  if(val>0)el.classList.add('verde');
+  else if(val<0)el.classList.add('rojo');
+}
+
+async function renderFinanzas(){
+  document.getElementById('finWeekLabel').textContent=finWeekLabel(finSemOff);
+  const ingSem=calcIngresosSemana(finSemOff);
+  const ingMes=calcIngresosMes();
+  const[gastoSem,gastoMes]=await Promise.all([getGastosSemana(finSemOff),getGastosMes()]);
+  const netaSem=ingSem-gastoSem,netaMes=ingMes-gastoMes;
+  // Resumen rápido
+  document.getElementById('rqIngSem').textContent=formatARS(ingSem);
+  document.getElementById('rqGastoSem').textContent=formatARS(gastoSem);
+  pintarVal('rqNetaSem',netaSem);
+  // Stats
+  document.getElementById('fIngSem').textContent=formatARS(ingSem);
+  document.getElementById('fGastoSem').textContent=formatARS(gastoSem);
+  pintarVal('fNetaSem',netaSem);
+  document.getElementById('fIngMes').textContent=formatARS(ingMes);
+  document.getElementById('fGastoMes').textContent=formatARS(gastoMes);
+  pintarVal('fNetaMes',netaMes);
+  await renderListaGastos();
+}
+
+async function renderListaGastos(){
+  const cont=document.getElementById('listaGastos');
+  cont.innerHTML='<div class="empty"><div class="empty-txt">Cargando…</div></div>';
+  try{
+    const data=await sbFetch('gastos?order=fecha.desc,created_at.desc&limit=20');
+    if(!data||!data.length){
+      cont.innerHTML='<div class="empty"><div class="empty-icon">💸</div><div class="empty-txt">Sin gastos registrados aún</div></div>';return;
+    }
+    const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    cont.innerHTML=data.map(g=>{
+      const d=new Date(g.fecha+'T00:00:00');
+      return`<div class="fin-gasto-item">
+        <div class="fin-gi-desc">${g.descripcion}</div>
+        <div class="fin-gi-fecha">${d.getDate()} ${ms[d.getMonth()]} ${d.getFullYear()}</div>
+        <div class="fin-gi-monto">$${Math.round(g.monto).toLocaleString('es-AR')}</div>
+        <button class="fin-gi-del" onclick="eliminarGasto('${g.id}')" title="Eliminar">✕</button>
+      </div>`;
+    }).join('');
+  }catch{
+    cont.innerHTML='<div class="empty"><div class="empty-txt">Error al cargar gastos</div></div>';
+  }
+}
+
+async function guardarGasto(){
+  const desc=document.getElementById('gDesc').value.trim();
+  const monto=parseFloat(document.getElementById('gMonto').value);
+  const fecha=document.getElementById('gFecha').value;
+  const msg=document.getElementById('gMsg');
+  if(!desc){msg.textContent='⚠ Ingresá una descripción';msg.style.color='var(--gray)';return;}
+  if(!monto||monto<=0){msg.textContent='⚠ Ingresá un monto válido';msg.style.color='var(--gray)';return;}
+  if(!fecha){msg.textContent='⚠ Seleccioná una fecha';msg.style.color='var(--gray)';return;}
+  msg.textContent='Guardando…';msg.style.color='var(--gray)';
+  mostrarSync('☁️ Guardando gasto...');
+  const res=await sbFetch('gastos',{method:'POST',body:JSON.stringify({descripcion:desc,monto,fecha})});
+  ocultarSync();
+  if(res!==null){
+    document.getElementById('gDesc').value='';
+    document.getElementById('gMonto').value='';
+    msg.textContent='✓ Gasto guardado';msg.style.color='var(--gold)';
+    setTimeout(()=>{msg.textContent='';},3000);
+    await renderFinanzas();
+  }else{
+    msg.textContent='✗ Error al guardar';msg.style.color='var(--gray)';
+  }
+}
+
+async function eliminarGasto(id){
+  if(!confirm('¿Eliminar este gasto?'))return;
+  mostrarSync('🗑 Eliminando...');
+  await sbFetch('gastos?id=eq.'+id,{method:'DELETE'});
+  ocultarSync();
+  await renderFinanzas();
+}
+
+function finCambiarSemana(dir){
+  finSemOff+=dir;
+  if(finSemOff>0)finSemOff=0;
+  renderFinanzas();
+}
+
+function initFinanzas(){
+  const hoy=new Date().toISOString().split('T')[0];
+  const fi=document.getElementById('gFecha');
+  if(fi&&!fi.value)fi.value=hoy;
+  renderFinanzas();
+}
 </script>
 </body>
 </html>
+
