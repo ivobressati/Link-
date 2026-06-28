@@ -81,7 +81,7 @@ select option{background:#111}
 .rank-right{text-align:right;flex-shrink:0}
 .rank-num{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gold);line-height:1}
 .rank-lbl{font-size:9px;color:var(--gray);letter-spacing:1px}
-.barb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.barb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
 .barb-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center}
 .barb-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--white);margin-bottom:12px}
 .barb-num{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);line-height:1}
@@ -159,7 +159,7 @@ select option{background:#111}
 .fin-gi-del{background:none;border:none;color:var(--gray);cursor:pointer;font-size:14px;padding:4px 6px;transition:color .2s;border-radius:6px}
 .fin-gi-del:hover{color:#c0392b}
 @media(max-width:400px){.srv-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){.form-grid{grid-template-columns:1fr}.barb-grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.client-card{flex-wrap:wrap}.client-actions{width:100%;justify-content:flex-end}.mps-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.form-grid{grid-template-columns:1fr}.barb-grid{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:repeat(2,1fr)}.client-card{flex-wrap:wrap}.client-actions{width:100%;justify-content:flex-end}.mps-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -172,6 +172,7 @@ select option{background:#111}
   <button class="nav-tab" onclick="showPage('barberos',this)">Barberos</button>
   <button class="nav-tab" onclick="showPage('perdidos',this)" id="tabPerdidos">Perdidos</button>
   <button class="nav-tab" onclick="showPage('finanzas',this)">💰 Finanzas</button>
+  <button class="nav-tab" onclick="showPage('pagos',this)">💵 Pagos</button>
 </div>
 
 <!-- ══ CLIENTES ══ -->
@@ -192,7 +193,7 @@ select option{background:#111}
       <div class="form-group"><label>Instagram</label><input type="text" id="fInsta" placeholder="@usuario"></div>
       <div class="form-group" style="grid-column:1/-1"><label>Barbero</label>
         <select id="fBarbero">
-          <option value="">Sin asignar</option><option>Ivo</option><option>Gonza</option><option>Bruno</option>
+          <option value="">Sin asignar</option><option>Ivo</option><option>Gonza</option><option>Bruno</option><option>Marcos</option>
         </select>
       </div>
     </div>
@@ -201,9 +202,17 @@ select option{background:#111}
     <div class="srv-selector">
       <div class="srv-sector-title"><span class="srv-sector-badge badge-llegada">📋 ORDEN DE LLEGADA</span><span class="srv-sector-sub">Todos los barberos</span></div>
       <div class="srv-grid">
+        <div class="srv-opt" data-id="basico_llegada" data-turno="llegada" onclick="selServicio(this)">
+          <div class="srv-opt-precio">$8.000</div>
+          <div class="srv-opt-nombre">Corte Básico</div>
+        </div>
         <div class="srv-opt" data-id="sencillo_llegada" data-turno="llegada" onclick="selServicio(this)">
           <div class="srv-opt-precio">$10.000</div>
           <div class="srv-opt-nombre">Corte Sencillo</div>
+        </div>
+        <div class="srv-opt" data-id="medio_llegada" data-turno="llegada" onclick="selServicio(this)">
+          <div class="srv-opt-precio">$12.000</div>
+          <div class="srv-opt-nombre">Corte Medio</div>
         </div>
         <div class="srv-opt" data-id="corte_llegada" data-turno="llegada" onclick="selServicio(this)">
           <div class="srv-opt-precio">$14.000</div>
@@ -214,7 +223,7 @@ select option{background:#111}
           <div class="srv-opt-nombre">Corte + Barba</div>
         </div>
       </div>
-      <div class="srv-sector-title" style="margin-top:16px"><span class="srv-sector-badge badge-turno">🗓 CON TURNO — GONZA / BRUNO</span></div>
+      <div class="srv-sector-title" style="margin-top:16px"><span class="srv-sector-badge badge-turno">🗓 CON TURNO — GONZA / BRUNO / MARCOS</span></div>
       <div class="srv-grid">
         <div class="srv-opt" data-id="corte_turno_gb" data-turno="turno" onclick="selServicio(this)">
           <div class="srv-opt-precio">$17.000</div>
@@ -263,11 +272,13 @@ select option{background:#111}
   <table class="tabla-precios">
     <thead><tr><th>Servicio</th><th>Tipo</th><th>Barbero</th><th>Precio</th></tr></thead>
     <tbody>
-      <tr><td>Corte sencillo</td><td><span class="tag tag-llegada">Orden llegada</span></td><td>Todos</td><td class="precio">$10.000</td></tr>
+      <tr><td>Corte Básico</td><td><span class="tag tag-llegada">Orden llegada</span></td><td>Todos</td><td class="precio">$8.000</td></tr>
+      <tr><td>Corte Sencillo</td><td><span class="tag tag-llegada">Orden llegada</span></td><td>Todos</td><td class="precio">$10.000</td></tr>
+      <tr><td>Corte Medio</td><td><span class="tag tag-llegada">Orden llegada</span></td><td>Todos</td><td class="precio">$12.000</td></tr>
       <tr><td>Corte</td><td><span class="tag tag-llegada">Orden llegada</span></td><td>Todos</td><td class="precio">$14.000</td></tr>
       <tr><td>Corte + Barba</td><td><span class="tag tag-llegada">Orden llegada</span></td><td>Todos</td><td class="precio">$17.000</td></tr>
-      <tr><td>Corte</td><td><span class="tag tag-turno">Con turno</span></td><td>Gonza / Bruno</td><td class="precio">$17.000</td></tr>
-      <tr><td>Corte + Barba</td><td><span class="tag tag-turno">Con turno</span></td><td>Gonza / Bruno</td><td class="precio">$22.000</td></tr>
+      <tr><td>Corte</td><td><span class="tag tag-turno">Con turno</span></td><td>Gonza / Bruno / Marcos</td><td class="precio">$17.000</td></tr>
+      <tr><td>Corte + Barba</td><td><span class="tag tag-turno">Con turno</span></td><td>Gonza / Bruno / Marcos</td><td class="precio">$22.000</td></tr>
       <tr><td>Corte</td><td><span class="tag tag-ivo">Con turno</span></td><td>Ivo</td><td class="precio">$20.000</td></tr>
       <tr><td>Corte + Barba</td><td><span class="tag tag-ivo">Con turno</span></td><td>Ivo</td><td class="precio">$22.000</td></tr>
     </tbody>
@@ -282,10 +293,12 @@ select option{background:#111}
 <!-- ══ RANKING ══ -->
 <div class="page" id="pageRanking">
   <div style="height:20px"></div>
-  <div class="sec-title">Top del Mes</div>
-  <div id="rankingMes" class="ranking-list"></div>
-  <div class="sec-title">Top Histórico</div>
-  <div id="rankingTotal" class="ranking-list"></div>
+  <div class="sec-title">🏆 Top Barberos del Mes</div>
+  <div id="rankingBarbMes" class="ranking-list"></div>
+  <div class="sec-title" style="margin-top:8px">📊 Top Histórico</div>
+  <div id="rankingBarbTotal" class="ranking-list"></div>
+  <div class="sec-title" style="margin-top:8px">📋 Actividad por Barbero</div>
+  <div id="rankingActividad" style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px"></div>
 </div>
 
 <!-- ══ BARBEROS ══ -->
@@ -316,9 +329,14 @@ select option{background:#111}
   <div class="perdidos-banner">
     <div>
       <div class="perdidos-txt">⚠ Sin venir hace más de 15 días</div>
-      <div style="font-size:11px;color:var(--gray);margin-top:3px">Mandales un mensaje para que vuelvan</div>
+      <div style="font-size:11px;color:var(--gray);margin-top:3px">Tocá 💬 en cada cliente para enviarle el recordatorio</div>
     </div>
     <div class="perdidos-count" id="perdidosCount">0</div>
+  </div>
+  <div style="background:rgba(37,211,102,.07);border:1px solid rgba(37,211,102,.25);border-radius:12px;padding:16px;margin-bottom:20px">
+    <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:#25D366;text-transform:uppercase;margin-bottom:8px">📲 Mensaje de recordatorio</div>
+    <div style="background:#0d0d0d;border-radius:8px;padding:12px;font-size:12px;line-height:1.8;color:var(--white);white-space:pre-wrap;font-family:'Montserrat',sans-serif;margin-bottom:10px" id="previewMsgPerdido">Cargando…</div>
+    <div style="font-size:10px;color:var(--gray);letter-spacing:1px">👆 Este mensaje se personaliza con el nombre, días ausente y nivel de cada cliente</div>
   </div>
   <div id="perdidosList" class="clients-list"></div>
 </div>
@@ -326,8 +344,34 @@ select option{background:#111}
 <!-- ══ FINANZAS ══ -->
 <div class="page" id="pageFinanzas">
   <div style="height:20px"></div>
+
+  <!-- INGRESO PRODUCTOS -->
+  <div class="form-card" style="border-color:rgba(39,174,96,.3);background:rgba(39,174,96,.04);margin-bottom:16px">
+    <div class="sec-title" style="color:var(--white)">Registrar Venta de Producto</div>
+    <div class="fin-form">
+      <div class="form-group">
+        <label>Producto</label>
+        <select id="prodDesc" onchange="onProdSelChange()" style="background:#0d0d0d;border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:'Montserrat',sans-serif;font-size:13px;padding:10px 13px">
+          <option value="Cera|13000">💈 Cera — $13.000</option>
+          <option value="Otro|0">Otro (ingresar monto)</option>
+        </select>
+      </div>
+      <div class="fin-row">
+        <div class="form-group" style="flex:1">
+          <label>Monto $</label>
+          <input type="number" id="prodMonto" placeholder="13000" min="0" step="100" value="13000">
+        </div>
+        <div class="form-group" style="flex:1">
+          <label>Fecha</label>
+          <input type="date" id="prodFecha" style="color-scheme:dark">
+        </div>
+      </div>
+      <button class="btn-add" onclick="guardarVentaProducto()" style="background:var(--green)">✦ &nbsp;GUARDAR VENTA</button>
+      <p id="prodMsg" style="font-size:11px;color:var(--gray);min-height:16px;margin-top:4px;letter-spacing:1px"></p>
+    </div>
+  </div>
+
   <div class="fin-top-grid">
-    <!-- CARGAR GASTO -->
     <div class="form-card">
       <div class="sec-title">Registrar Gasto</div>
       <div class="fin-form">
@@ -349,7 +393,6 @@ select option{background:#111}
         <p id="gMsg" style="font-size:11px;color:var(--gray);min-height:16px;margin-top:4px;letter-spacing:1px"></p>
       </div>
     </div>
-    <!-- RESUMEN RÁPIDO -->
     <div class="form-card fin-resumen-card">
       <div class="sec-title">Resumen Rápido</div>
       <div class="fin-kpi-grid">
@@ -369,7 +412,6 @@ select option{background:#111}
     </div>
   </div>
 
-  <!-- ESTADÍSTICAS -->
   <div class="sec-title" style="margin-top:8px">Estadísticas Financieras</div>
   <div class="form-card" style="margin-bottom:20px">
     <div class="week-nav" style="margin-bottom:16px">
@@ -400,6 +442,39 @@ select option{background:#111}
   <div id="listaGastos" class="clients-list"></div>
 </div>
 
+<!-- ══ PAGOS ══ -->
+<div class="page" id="pagePagos">
+  <div style="height:20px"></div>
+  <div class="sec-title">💵 Liquidación Semanal</div>
+  <div style="background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.2);border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:12px;color:var(--gray);line-height:1.7">
+    Cada barbero cobra el <strong style="color:var(--gold)">50%</strong> de lo que facturó en la semana actual.<br>
+    El monto se calcula automáticamente según los cortes registrados.
+  </div>
+  <div class="week-nav" style="margin-bottom:20px">
+    <button onclick="pagoscambiarSemana(-1)">◀</button>
+    <div class="week-label" id="pagosWeekLabel">Esta semana</div>
+    <button onclick="pagoschangiarSemana(1)">▶</button>
+  </div>
+  <div id="pagosList" style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center">
+      <div style="font-size:9px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:6px">Total a pagar barberos</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--gold);line-height:1" id="pagosTotalSem">$0</div>
+      <div style="font-size:10px;color:var(--gray);margin-top:4px">50% barberos</div>
+    </div>
+    <div style="background:rgba(39,174,96,.06);border:1px solid rgba(39,174,96,.25);border-radius:12px;padding:16px;text-align:center">
+      <div style="font-size:9px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:6px">50% barbería</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--green);line-height:1" id="pagosBarberia">$0</div>
+      <div style="font-size:10px;color:var(--gray);margin-top:4px">antes de gastos</div>
+    </div>
+  </div>
+  <div style="background:rgba(39,174,96,.1);border:2px solid rgba(39,174,96,.4);border-radius:14px;padding:20px;text-align:center">
+    <div style="font-size:9px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:6px">Ganancia neta de la barbería</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;line-height:1;margin-bottom:4px" id="pagosNeta">$0</div>
+    <div style="font-size:10px;color:var(--gray);letter-spacing:1px">50% cortes + ventas de productos − gastos de la semana</div>
+  </div>
+</div>
+
 <!-- ══ MODAL ══ -->
 <div class="modal-overlay" id="modalWsp">
   <div class="modal">
@@ -426,24 +501,16 @@ select option{background:#111}
 <script>
 // ══ PRECIOS FIJOS ══
 const PRECIOS = [
-  {id:'sencillo_llegada', nombre:'Corte Sencillo', tipo:'Orden llegada', barbero:'todos', precio:10000},
-  {id:'corte_llegada',    nombre:'Corte',          tipo:'Orden llegada', barbero:'todos', precio:14000},
-  {id:'cb_llegada',       nombre:'Corte + Barba',  tipo:'Orden llegada', barbero:'todos', precio:17000},
-  {id:'corte_turno_gb',   nombre:'Corte',          tipo:'Con turno',     barbero:'Gonza/Bruno', precio:17000},
-  {id:'cb_turno_gb',      nombre:'Corte + Barba',  tipo:'Con turno',     barbero:'Gonza/Bruno', precio:22000},
-  {id:'corte_ivo',        nombre:'Corte',          tipo:'Con turno',     barbero:'Ivo', precio:20000},
-  {id:'cb_ivo',           nombre:'Corte + Barba',  tipo:'Con turno',     barbero:'Ivo', precio:22000},
+  {id:'basico_llegada',  nombre:'Corte Básico',   tipo:'Orden llegada', barbero:'todos', precio:8000},
+  {id:'sencillo_llegada',nombre:'Corte Sencillo',  tipo:'Orden llegada', barbero:'todos', precio:10000},
+  {id:'medio_llegada',   nombre:'Corte Medio',     tipo:'Orden llegada', barbero:'todos', precio:12000},
+  {id:'corte_llegada',   nombre:'Corte',           tipo:'Orden llegada', barbero:'todos', precio:14000},
+  {id:'cb_llegada',      nombre:'Corte + Barba',   tipo:'Orden llegada', barbero:'todos', precio:17000},
+  {id:'corte_turno_gb',  nombre:'Corte',           tipo:'Con turno',     barbero:'Gonza/Bruno/Marcos', precio:17000},
+  {id:'cb_turno_gb',     nombre:'Corte + Barba',   tipo:'Con turno',     barbero:'Gonza/Bruno/Marcos', precio:22000},
+  {id:'corte_ivo',       nombre:'Corte',           tipo:'Con turno',     barbero:'Ivo', precio:20000},
+  {id:'cb_ivo',          nombre:'Corte + Barba',   tipo:'Con turno',     barbero:'Ivo', precio:22000},
 ];
-
-function getPreciosParaBarbero(barbero, turno){
-  if(barbero==='Ivo') return PRECIOS.filter(p=>p.barbero==='Ivo'||p.barbero==='todos');
-  if(barbero==='Gonza'||barbero==='Bruno'){
-    if(turno==='turno') return PRECIOS.filter(p=>p.barbero==='Gonza/Bruno'||p.barbero==='todos');
-    return PRECIOS.filter(p=>p.barbero==='todos');
-  }
-  if(turno==='turno') return PRECIOS.filter(p=>p.barbero!=='Ivo');
-  return PRECIOS.filter(p=>p.barbero==='todos');
-}
 
 function getPrecio(servId){ const p=PRECIOS.find(x=>x.id===servId); return p?p.precio:0; }
 function precioDeCliente(c){ return getPrecio(c.servicio)||14000; }
@@ -469,9 +536,7 @@ async function sbFetch(path,opts){
 }
 
 async function cargarDesdeNube(){
-  // Mostrar local inmediatamente (sin esperar la nube)
   if(clientes.length>0) renderAll();
-  // Sincronizar con Supabase en segundo plano
   const data=await sbFetch('clientes?order=creado.desc&limit=1000');
   if(data&&data.length>=0){clientes=data;localStorage.setItem(KEY,JSON.stringify(clientes));}
   renderAll();
@@ -549,19 +614,18 @@ function selServicio(el){
   }
 }
 
-function actualizarServiciosForm(){}
-function mostrarPrecioForm(){}
-
 function buildMsgCorte(c){
   const r=getRango(c.cortes),n=c.nombre.split(' ')[0];
-  let m=`✂️ Hola ${n}!\nGracias por venir hoy a *Barber Studio Bressati*.\n\n`;
+  let m=`✂️ ¡Hola ${n}!\n\nGracias por elegirnos hoy en *Barber Studio Bressati*. Fue un placer atenderte 🙌\n\n`;
   m+=`✂️ Ya llevás *${c.cortes} corte${c.cortes!==1?'s':''}* con nosotros.\n`;
   m+=`Nivel: ${r.emoji} *${r.nombre}*`;
   if(r.desc!=='Sin descuento')m+=` — *${r.desc}* en cada visita`;
   m+='\n\n';
   if(r.sig)m+=`📋 Te ${r.falta===1?'falta':'faltan'} *${r.falta} corte${r.falta!==1?'s':''}* para llegar a *${r.sig}*\n\n`;
   else m+=`🏆 *¡Sos Diamante!* El nivel más alto.\n\n`;
-  m+=`Te esperamos en unos días! 💪\n_Barber Studio Bressati_`;
+  m+=`📅 *Reservá tu próximo turno acá:*\nhttps://bressatistudio1.site.agendapro.com/ar\n\n`;
+  m+=`⭐ *¿Te gustó el servicio? Nos ayudás mucho con tu reseña en Google:*\nhttps://maps.app.goo.gl/zDGgSPrByqi6mEXR8\n\n`;
+  m+=`¡Te esperamos pronto! 💈\n_Barber Studio Bressati_`;
   return m;
 }
 
@@ -572,6 +636,7 @@ function buildMsgPerdido(c){
   if(r.desc!=='Sin descuento')m+=` con *${r.desc}* en tu próxima visita`;
   m+='.\n\n';
   if(r.sig)m+=`Solo te faltan *${r.falta} cortes* para subir a *${r.sig}*.\n\n`;
+  m+=`📅 *Reservá tu turno fácil acá:*\nhttps://bressatistudio1.site.agendapro.com/ar\n\n`;
   m+=`¡Te esperamos cuando quieras! 🙌\n_Barber Studio Bressati_`;
   return m;
 }
@@ -646,7 +711,7 @@ function abrirModal(id,perdido,mostrarSelector){
     sel.style.display='block';
     const grupos=[
       {label:'📋 ORDEN DE LLEGADA', badge:'badge-llegada', items:PRECIOS.filter(p=>p.tipo==='Orden llegada')},
-      {label:'🗓 CON TURNO — GONZA / BRUNO', badge:'badge-turno', items:PRECIOS.filter(p=>p.barbero==='Gonza/Bruno')},
+      {label:'🗓 CON TURNO — GONZA / BRUNO / MARCOS', badge:'badge-turno', items:PRECIOS.filter(p=>p.barbero==='Gonza/Bruno/Marcos')},
       {label:'💎 CON TURNO — IVO', badge:'badge-ivo', items:PRECIOS.filter(p=>p.barbero==='Ivo')},
     ];
     document.getElementById('mpsGrid').innerHTML=grupos.map(g=>`
@@ -696,7 +761,8 @@ function showPage(p,btn){
   if(p==='barberos')renderBarberos();
   if(p==='perdidos')renderPerdidos();
   if(p==='precios')renderPrecios();
-  if(p==='finanzas')initFinanzas(); // ← FINANZAS
+  if(p==='finanzas')initFinanzas();
+  if(p==='pagos')renderPagos();
 }
 
 function setFiltro(f){
@@ -772,25 +838,78 @@ function renderPrecios(){
 }
 
 function renderRanking(){
-  const n=new Date(),m=n.getMonth(),y=n.getFullYear();
-  const porMes=[...clientes].map(c=>({...c,vm:(c.visitas||[]).filter(v=>{const d=new Date(v);return d.getMonth()===m&&d.getFullYear()===y}).length})).sort((a,b)=>b.vm-a.vm).filter(c=>c.vm>0).slice(0,10);
-  const porTot=[...clientes].sort((a,b)=>b.cortes-a.cortes).slice(0,10);
-  const mkList=(lista,campo,suf)=>lista.length?lista.map((c,i)=>{
-    const r=getRango(c.cortes),v=c[campo],pc=i===0?'top1':i===1?'top2':i===2?'top3':'';
-    return`<div class="rank-card">
-      <div class="rank-pos ${pc}">${i+1}</div>
-      <div class="client-avatar ${r.cls}" style="width:36px;height:36px;font-size:14px">${c.nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
-      <div class="rank-info"><div class="rank-name">${c.nombre}</div><div class="rank-meta">${r.emoji} ${r.nombre}${c.barbero?' · '+c.barbero:''}</div></div>
-      <div class="rank-right"><div class="rank-num">${v}</div><div class="rank-lbl">${suf}</div></div>
+  const barberos=['Ivo','Gonza','Bruno','Marcos'];
+  const now=new Date(),m=now.getMonth(),y=now.getFullYear();
+  const hoy=hoyStr();
+  const [semIni,semFin]=getWeekRange(0);
+
+  // Cortes del mes por barbero
+  const dataMes=barberos.map(b=>{
+    const mis=clientes.filter(c=>c.barbero===b);
+    const cortesMes=mis.reduce((a,c)=>{
+      return a+(c.visitas||[]).filter(v=>{const d=new Date(v);return d.getMonth()===m&&d.getFullYear()===y}).length;
+    },0);
+    const cortesTotal=mis.reduce((a,c)=>a+c.cortes,0);
+    const cortesHoy=mis.reduce((a,c)=>a+(c.visitas||[]).filter(v=>v===hoy).length,0);
+    const cortesSem=mis.reduce((a,c)=>a+(c.visitas||[]).filter(v=>v>=semIni&&v<=semFin).length,0);
+    return{nombre:b,cortesMes,cortesTotal,cortesHoy,cortesSem};
+  });
+
+  const porMes=[...dataMes].sort((a,b)=>b.cortesMes-a.cortesMes);
+  const porTot=[...dataMes].sort((a,b)=>b.cortesTotal-a.cortesTotal);
+
+  const medallasMes=['🥇','🥈','🥉','4️⃣'];
+  const clsMes=['top1','top2','top3',''];
+  const iconoBarbero={'Ivo':'👑','Gonza':'✂️','Bruno':'✂️','Marcos':'✂️'};
+
+  const mkBarbList=(lista,campo,suf,medallasArr,clsArr)=>lista.map((b,i)=>{
+    const v=b[campo];
+    return`<div class="rank-card" style="${i===0?'border-color:rgba(212,175,55,.4);background:rgba(212,175,55,.04)':''}">
+      <div class="rank-pos ${clsArr[i]}" style="font-size:22px">${medallasArr[i]}</div>
+      <div style="width:40px;height:40px;border-radius:50%;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${iconoBarbero[b.nombre]||'✂️'}</div>
+      <div class="rank-info">
+        <div class="rank-name" style="font-size:16px;letter-spacing:1px">${b.nombre}</div>
+        <div class="rank-meta" style="margin-top:3px">Barbero · Barber Studio Bressati</div>
+      </div>
+      <div class="rank-right">
+        <div class="rank-num" style="${v===0?'color:var(--gray)':''}">${v}</div>
+        <div class="rank-lbl">${suf}</div>
+      </div>
     </div>`;
-  }).join(''):'<div class="empty"><div class="empty-txt">Sin datos aún</div></div>';
-  document.getElementById('rankingMes').innerHTML=mkList(porMes,'vm','ESTE MES');
-  document.getElementById('rankingTotal').innerHTML=mkList(porTot,'cortes','CORTES');
+  }).join('');
+
+  document.getElementById('rankingBarbMes').innerHTML=mkBarbList(porMes,'cortesMes','ESTE MES',medallasMes,clsMes);
+  document.getElementById('rankingBarbTotal').innerHTML=mkBarbList(porTot,'cortesTotal','HISTÓRICO',medallasMes,clsMes);
+
+  // Mini actividad por barbero
+  document.getElementById('rankingActividad').innerHTML=dataMes.map(b=>`
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--white);min-width:70px">${b.nombre}</div>
+      <div style="display:flex;gap:8px;flex:1;flex-wrap:wrap">
+        <div style="background:#0d0d0d;border-radius:8px;padding:8px 12px;text-align:center;flex:1;min-width:55px">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);line-height:1">${b.cortesHoy}</div>
+          <div style="font-size:9px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-top:2px">Hoy</div>
+        </div>
+        <div style="background:#0d0d0d;border-radius:8px;padding:8px 12px;text-align:center;flex:1;min-width:55px">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);line-height:1">${b.cortesSem}</div>
+          <div style="font-size:9px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-top:2px">Semana</div>
+        </div>
+        <div style="background:#0d0d0d;border-radius:8px;padding:8px 12px;text-align:center;flex:1;min-width:55px">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);line-height:1">${b.cortesMes}</div>
+          <div style="font-size:9px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-top:2px">Mes</div>
+        </div>
+        <div style="background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:8px 12px;text-align:center;flex:1;min-width:55px">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);line-height:1">${b.cortesTotal}</div>
+          <div style="font-size:9px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-top:2px">Total</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
 }
 
 function renderBarberos(){
   document.getElementById('weekLabel').textContent=weekLabel(semOff);
-  const barberos=['Ivo','Gonza','Bruno'];
+  const barberos=['Ivo','Gonza','Bruno','Marcos'];
   let totSem=0;
   document.getElementById('barbGrid').innerHTML=barberos.map(b=>{
     const mis=clientes.filter(c=>c.barbero===b);
@@ -831,6 +950,15 @@ function renderBarberos(){
 function renderPerdidos(){
   const lista=clientes.filter(c=>(diasDesde(c)||0)>15).sort((a,b)=>(diasDesde(b)||0)-(diasDesde(a)||0));
   document.getElementById('perdidosCount').textContent=lista.length;
+  // Mostrar preview del mensaje con el primer cliente de la lista
+  const prev=document.getElementById('previewMsgPerdido');
+  if(prev){
+    if(lista.length>0){
+      prev.textContent=buildMsgPerdido(lista[0]);
+    } else {
+      prev.textContent='No hay clientes inactivos por ahora 🎉';
+    }
+  }
   const el=document.getElementById('perdidosList');
   if(!lista.length){el.innerHTML='<div class="empty"><div class="empty-icon">🎉</div><div class="empty-txt">¡Todos tus clientes están activos!</div></div>';return}
   el.innerHTML=lista.map(c=>{
@@ -851,7 +979,7 @@ function renderPerdidos(){
         <div><div class="cuts-num">${c.cortes}</div><div class="cuts-lbl">CORTES</div></div>
       </div>
       <div class="client-actions">
-        <button class="btn-icon" onclick="abrirModal(${c.id},true,false)">💬</button>
+        <button class="btn-icon" onclick="abrirModal(${c.id},true,false)" title="Enviar recordatorio">💬</button>
         <button class="btn-cut" onclick="sumarCorte(${c.id})">+1</button>
       </div>
     </div>`;
@@ -864,6 +992,14 @@ document.getElementById('modalWsp').addEventListener('click',function(e){if(e.ta
 
 // ══ MÓDULO FINANZAS ══
 let finSemOff = 0;
+let ventasCera = [];
+
+async function cargarVentasCera(){
+  try{
+    const data=await sbFetch('ventas_productos?order=fecha.desc&limit=500');
+    if(data) ventasCera=data;
+  }catch(e){ventasCera=[];}
+}
 
 function finGetWeekRange(off=0){
   const d=new Date(),day=d.getDay(),lu=new Date(d);
@@ -887,18 +1023,24 @@ function formatARS(n){
 
 function calcIngresosSemana(off=0){
   const[ini,fin]=finGetWeekRange(off);
-  return clientes.reduce((total,c)=>{
+  const corteSem=clientes.reduce((total,c)=>{
     const ps=(c.precios||[]).filter(p=>p.fecha>=ini&&p.fecha<=fin);
     return total+ps.reduce((s,p)=>s+(p.precio||0),0);
   },0);
+  const ceraSem=(ventasCera||[]).filter(v=>v.fecha>=ini&&v.fecha<=fin).reduce((s,v)=>s+v.monto,0);
+  return corteSem+ceraSem;
 }
 
 function calcIngresosMes(){
   const n=new Date(),m=n.getMonth(),y=n.getFullYear();
-  return clientes.reduce((total,c)=>{
+  const corteMes=clientes.reduce((total,c)=>{
     const ps=(c.precios||[]).filter(p=>{const d=new Date(p.fecha);return d.getMonth()===m&&d.getFullYear()===y});
     return total+ps.reduce((s,p)=>s+(p.precio||0),0);
   },0);
+  const ini=n.getFullYear()+'-'+String(m+1).padStart(2,'0')+'-01';
+  const last=new Date(n.getFullYear(),m+1,0).toISOString().split('T')[0];
+  const ceraMes=(ventasCera||[]).filter(v=>v.fecha>=ini&&v.fecha<=last).reduce((s,v)=>s+v.monto,0);
+  return corteMes+ceraMes;
 }
 
 async function getGastosSemana(off=0){
@@ -936,11 +1078,9 @@ async function renderFinanzas(){
   const ingMes=calcIngresosMes();
   const[gastoSem,gastoMes]=await Promise.all([getGastosSemana(finSemOff),getGastosMes()]);
   const netaSem=ingSem-gastoSem,netaMes=ingMes-gastoMes;
-  // Resumen rápido
   document.getElementById('rqIngSem').textContent=formatARS(ingSem);
   document.getElementById('rqGastoSem').textContent=formatARS(gastoSem);
   pintarVal('rqNetaSem',netaSem);
-  // Stats
   document.getElementById('fIngSem').textContent=formatARS(ingSem);
   document.getElementById('fGastoSem').textContent=formatARS(gastoSem);
   pintarVal('fNetaSem',netaSem);
@@ -954,23 +1094,41 @@ async function renderListaGastos(){
   const cont=document.getElementById('listaGastos');
   cont.innerHTML='<div class="empty"><div class="empty-txt">Cargando…</div></div>';
   try{
-    const data=await sbFetch('gastos?order=fecha.desc,created_at.desc&limit=20');
-    if(!data||!data.length){
-      cont.innerHTML='<div class="empty"><div class="empty-icon">💸</div><div class="empty-txt">Sin gastos registrados aún</div></div>';return;
-    }
+    const [gastos,ventas]=await Promise.all([
+      sbFetch('gastos?order=fecha.desc,created_at.desc&limit=20'),
+      sbFetch('ventas_productos?order=fecha.desc,created_at.desc&limit=20')
+    ]);
     const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-    cont.innerHTML=data.map(g=>{
+    let items=[];
+    if(gastos&&gastos.length) items=items.concat(gastos.map(g=>({...g,_tipo:'gasto'})));
+    if(ventas&&ventas.length) items=items.concat(ventas.map(v=>({...v,_tipo:'ingreso'})));
+    items.sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)||new Date(b.created_at)-new Date(a.created_at));
+    items=items.slice(0,30);
+    if(!items.length){
+      cont.innerHTML='<div class="empty"><div class="empty-icon">💸</div><div class="empty-txt">Sin movimientos registrados aún</div></div>';return;
+    }
+    cont.innerHTML=items.map(g=>{
       const d=new Date(g.fecha+'T00:00:00');
-      return`<div class="fin-gasto-item">
+      const esIngreso=g._tipo==='ingreso';
+      return`<div class="fin-gasto-item" style="${esIngreso?'border-color:rgba(39,174,96,.25);background:rgba(39,174,96,.04)':''}">
         <div class="fin-gi-desc">${g.descripcion}</div>
         <div class="fin-gi-fecha">${d.getDate()} ${ms[d.getMonth()]} ${d.getFullYear()}</div>
-        <div class="fin-gi-monto">$${Math.round(g.monto).toLocaleString('es-AR')}</div>
-        <button class="fin-gi-del" onclick="eliminarGasto('${g.id}')" title="Eliminar">✕</button>
+        <div class="fin-gi-monto" style="${esIngreso?'color:var(--green)':''}">${esIngreso?'+':'−'}$${Math.round(g.monto).toLocaleString('es-AR')}</div>
+        <button class="fin-gi-del" onclick="${esIngreso?`eliminarVenta('${g.id}')`:`eliminarGasto('${g.id}')`}" title="Eliminar">✕</button>
       </div>`;
     }).join('');
   }catch{
-    cont.innerHTML='<div class="empty"><div class="empty-txt">Error al cargar gastos</div></div>';
+    cont.innerHTML='<div class="empty"><div class="empty-txt">Error al cargar movimientos</div></div>';
   }
+}
+
+async function eliminarVenta(id){
+  if(!confirm('¿Eliminar esta venta?'))return;
+  mostrarSync('🗑 Eliminando...');
+  await sbFetch('ventas_productos?id=eq.'+id,{method:'DELETE'});
+  ocultarSync();
+  await cargarVentasCera();
+  await renderFinanzas();
 }
 
 async function guardarGasto(){
@@ -1010,13 +1168,136 @@ function finCambiarSemana(dir){
   renderFinanzas();
 }
 
+async function guardarVentaProducto(){
+  const sel=document.getElementById('prodDesc');
+  const [nombreProd]=sel.value.split('|');
+  const monto=parseFloat(document.getElementById('prodMonto').value);
+  const fecha=document.getElementById('prodFecha').value;
+  const msg=document.getElementById('prodMsg');
+  if(!monto||monto<=0){msg.textContent='⚠ Ingresá un monto válido';return;}
+  if(!fecha){msg.textContent='⚠ Seleccioná una fecha';return;}
+  msg.textContent='Guardando…';msg.style.color='var(--gray)';
+  mostrarSync('☁️ Guardando venta...');
+  const desc=nombreProd==='Otro'?'Venta de producto':'💈 Venta de '+nombreProd;
+  const res=await sbFetch('ventas_productos',{method:'POST',body:JSON.stringify({descripcion:desc,monto,fecha})});
+  ocultarSync();
+  if(res!==null){
+    msg.textContent='✓ Venta registrada — $'+monto.toLocaleString('es-AR');
+    msg.style.color='var(--green)';
+    setTimeout(()=>{msg.textContent='';},3000);
+    await cargarVentasCera();
+    await renderFinanzas();
+  } else {
+    msg.textContent='✗ Error al registrar';
+    msg.style.color='var(--gray)';
+  }
+}
+
+function onProdSelChange(){
+  const sel=document.getElementById('prodDesc');
+  const [,precio]=sel.value.split('|');
+  const montoInput=document.getElementById('prodMonto');
+  if(precio&&precio!=='0') montoInput.value=precio;
+  else montoInput.value='';
+  montoInput.focus();
+}
+
 function initFinanzas(){
   const hoy=new Date().toISOString().split('T')[0];
   const fi=document.getElementById('gFecha');
   if(fi&&!fi.value)fi.value=hoy;
-  renderFinanzas();
+  const fp=document.getElementById('prodFecha');
+  if(fp&&!fp.value)fp.value=hoy;
+  cargarVentasCera().then(()=>renderFinanzas());
 }
+
+// ══ MÓDULO PAGOS ══
+let pagosSemOff = 0;
+
+function pagoscambiarSemana(dir){
+  pagosSemOff+=dir;
+  if(pagosSemOff>0)pagosSemOff=0;
+  renderPagos();
+}
+// alias typo en HTML
+function pagoschangiarSemana(dir){ pagoscambiarSemana(dir); }
+
+async function renderPagos(){
+  const barberos=['Ivo','Gonza','Bruno','Marcos'];
+  const [ini,fin]=getWeekRange(pagosSemOff);
+  document.getElementById('pagosWeekLabel').textContent=weekLabel(pagosSemOff);
+  const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const diIni=new Date(ini),diFin=new Date(fin);
+  const periodoTxt=`${diIni.getDate()} ${ms[diIni.getMonth()]} – ${diFin.getDate()} ${ms[diFin.getMonth()]}`;
+
+  let totalBruto=0;
+
+  const items=barberos.map(b=>{
+    const mis=clientes.filter(c=>c.barbero===b);
+    const ingresosBrutos=mis.reduce((a,c)=>{
+      const ps=(c.precios||[]).filter(p=>p.fecha>=ini&&p.fecha<=fin);
+      return a+ps.reduce((s,p)=>s+(p.precio||0),0);
+    },0);
+    const cortesSem=mis.reduce((a,c)=>a+(c.visitas||[]).filter(v=>v>=ini&&v<=fin).length,0);
+    const pago=Math.round(ingresosBrutos*0.5);
+    totalBruto+=ingresosBrutos;
+    return{nombre:b,cortesSem,ingresosBrutos,pago};
+  });
+
+  const totalBarberos=Math.round(totalBruto*0.5);
+  const mitadBarberia=Math.round(totalBruto*0.5);
+
+  // Ventas de productos de la semana
+  const ventas=(ventasCera||[]).filter(v=>v.fecha>=ini&&v.fecha<=fin).reduce((s,v)=>s+v.monto,0);
+
+  // Gastos de la semana desde Supabase
+  let gastosSem=0;
+  try{
+    const gData=await sbFetch('gastos?fecha=gte.'+ini+'&fecha=lte.'+fin+'&select=monto');
+    if(gData) gastosSem=gData.reduce((s,g)=>s+(parseFloat(g.monto)||0),0);
+  }catch(e){}
+
+  const neta=mitadBarberia+ventas-gastosSem;
+  const netaEl=document.getElementById('pagosNeta');
+  netaEl.textContent='$'+Math.abs(neta).toLocaleString('es-AR');
+  netaEl.style.color=neta>=0?'var(--green)':'var(--red)';
+
+  document.getElementById('pagosTotalSem').textContent='$'+totalBarberos.toLocaleString('es-AR');
+  document.getElementById('pagosBarberia').textContent='$'+mitadBarberia.toLocaleString('es-AR');
+
+  const iconos={Ivo:'👑',Gonza:'✂️',Bruno:'✂️',Marcos:'✂️'};
+
+  document.getElementById('pagosList').innerHTML=items.map(b=>`
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+      <div style="padding:16px;display:flex;align-items:center;gap:14px">
+        <div style="width:46px;height:46px;border-radius:50%;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${iconos[b.nombre]||'✂️'}</div>
+        <div style="flex:1">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--white)">${b.nombre}</div>
+          <div style="font-size:11px;color:var(--gray);margin-top:2px">${periodoTxt}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:9px;letter-spacing:1.5px;color:var(--gray);text-transform:uppercase">A pagar</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--gold);line-height:1.1">$${b.pago.toLocaleString('es-AR')}</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr 1fr;background:#0d0d0d">
+        <div style="padding:12px;text-align:center;border-right:1px solid var(--border)">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--white)">${b.cortesSem}</div>
+          <div style="font-size:9px;color:var(--gray);letter-spacing:1px;text-transform:uppercase">Cortes</div>
+        </div>
+        <div style="padding:12px;text-align:center;border-right:1px solid var(--border)">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--white)">$${Math.round(b.ingresosBrutos/1000)}k</div>
+          <div style="font-size:9px;color:var(--gray);letter-spacing:1px;text-transform:uppercase">Facturado</div>
+        </div>
+        <div style="padding:12px;text-align:center;background:rgba(212,175,55,.05)">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold)">50%</div>
+          <div style="font-size:9px;color:var(--gray);letter-spacing:1px;text-transform:uppercase">Comisión</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
 </script>
 </body>
 </html>
-
