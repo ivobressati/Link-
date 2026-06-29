@@ -197,6 +197,20 @@ select option{background:#111}
         </select>
       </div>
     </div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:8px">Forma de pago</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div id="btnEfectivo" onclick="selPago('efectivo')" style="background:rgba(39,174,96,.15);border:2px solid var(--green);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all .2s">
+          <div style="font-size:20px;margin-bottom:4px">💵</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--green)">EFECTIVO</div>
+        </div>
+        <div id="btnTransferencia" onclick="selPago('transferencia')" style="background:#0d0d0d;border:2px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all .2s">
+          <div style="font-size:20px;margin-bottom:4px">📲</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--gray)">TRANSFERENCIA</div>
+        </div>
+      </div>
+    </div>
+    <input type="hidden" id="fPago" value="efectivo">
     <input type="hidden" id="fServicio" value="">
     <input type="hidden" id="fTurno" value="llegada">
     <div class="srv-selector">
@@ -484,6 +498,20 @@ select option{background:#111}
     <div id="modalPrecioSelector" class="modal-precio-selector" style="display:none">
       <div class="mps-title">¿Qué servicio hizo hoy?</div>
       <div class="mps-grid" id="mpsGrid"></div>
+      <div style="margin-top:12px">
+        <div class="mps-title">Forma de pago</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+          <div id="mbtnEfectivo" onclick="selPagoModal('efectivo')" style="background:rgba(39,174,96,.2);border:2px solid var(--green);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .2s">
+            <div style="font-size:18px;margin-bottom:3px">💵</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--green)">EFECTIVO</div>
+          </div>
+          <div id="mbtnTransferencia" onclick="selPagoModal('transferencia')" style="background:#0d0d0d;border:2px solid var(--border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .2s">
+            <div style="font-size:18px;margin-bottom:3px">📲</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--gray)">TRANSFERENCIA</div>
+          </div>
+        </div>
+        <input type="hidden" id="fPagoModal" value="efectivo">
+      </div>
     </div>
     <div class="wsp-msg" id="modalMsg"></div>
     <a id="modalWspBtn" href="#" target="_blank" class="btn-wsp">
@@ -597,8 +625,43 @@ function vxSem(c,off=0){
   return(c.visitas||[]).filter(v=>v>=i&&v<=f).length;
 }
 
+function selPago(tipo){
+  document.getElementById('fPago').value=tipo;
+  const btnE=document.getElementById('btnEfectivo');
+  const btnT=document.getElementById('btnTransferencia');
+  if(tipo==='efectivo'){
+    btnE.style.background='rgba(39,174,96,.2)';btnE.style.borderColor='var(--green)';
+    btnE.querySelector('div:last-child').style.color='var(--green)';
+    btnT.style.background='#0d0d0d';btnT.style.borderColor='var(--border)';
+    btnT.querySelector('div:last-child').style.color='var(--gray)';
+  } else {
+    btnT.style.background='rgba(39,174,96,.15)';btnT.style.borderColor='var(--green)';
+    btnT.querySelector('div:last-child').style.color='var(--green)';
+    btnE.style.background='#0d0d0d';btnE.style.borderColor='var(--border)';
+    btnE.querySelector('div:last-child').style.color='var(--gray)';
+  }
+}
+
+function selPagoModal(tipo){
+  document.getElementById('fPagoModal').value=tipo;
+  const btnE=document.getElementById('mbtnEfectivo');
+  const btnT=document.getElementById('mbtnTransferencia');
+  if(tipo==='efectivo'){
+    btnE.style.background='rgba(39,174,96,.2)';btnE.style.borderColor='var(--green)';
+    btnE.querySelector('div:last-child').style.color='var(--green)';
+    btnT.style.background='#0d0d0d';btnT.style.borderColor='var(--border)';
+    btnT.querySelector('div:last-child').style.color='var(--gray)';
+  } else {
+    btnT.style.background='rgba(39,174,96,.15)';btnT.style.borderColor='var(--green)';
+    btnT.querySelector('div:last-child').style.color='var(--green)';
+    btnE.style.background='#0d0d0d';btnE.style.borderColor='var(--border)';
+    btnE.querySelector('div:last-child').style.color='var(--gray)';
+  }
+}
+
 function selServicio(el){
   document.querySelectorAll('.srv-opt').forEach(e=>e.classList.remove('selected'));
+  selPago('efectivo');
   el.classList.add('selected');
   const id=el.dataset.id,turno=el.dataset.turno;
   document.getElementById('fServicio').value=id;
@@ -649,6 +712,7 @@ function agregarCliente(){
   const hoy=hoyStr(),id=Date.now();
   const servicio=document.getElementById('fServicio').value;
   const precio=getPrecio(servicio);
+  const pago=document.getElementById('fPago').value||'efectivo';
   const nuevo={id,nombre,tel,
     email:document.getElementById('fEmail').value.trim(),
     insta:document.getElementById('fInsta').value.trim(),
@@ -656,7 +720,7 @@ function agregarCliente(){
     turno:document.getElementById('fTurno').value,
     servicio,cortes:1,
     visitas:[hoy],
-    precios:[{fecha:hoy,precio,servicio}],
+    precios:[{fecha:hoy,precio,servicio,pago}],
     creado:hoy};
   clientes.unshift(nuevo);
   save();
@@ -678,10 +742,11 @@ function confirmarCorte(id,servId){
   c.cortes++;
   const hoy=hoyStr();
   c.visitas.push(hoy);
+  const pagoModal=document.getElementById('fPagoModal')?document.getElementById('fPagoModal').value:'efectivo';
   if(servId){
     c.servicio=servId;
     if(!c.precios)c.precios=[];
-    c.precios.push({fecha:hoy,precio:getPrecio(servId),servicio:servId});
+    c.precios.push({fecha:hoy,precio:getPrecio(servId),servicio:servId,pago:pagoModal});
   }
   save();
   mostrarSync('☁️ Guardando...');
@@ -811,6 +876,7 @@ function renderClientes(){
           <span>📱 ${c.tel}</span>
           ${c.barbero?`<span>✂️ ${c.barbero}</span>`:''}
           ${pInfo?`<span style="color:var(--gold)">$${pInfo.precio.toLocaleString('es-AR')}</span>`:''}
+          ${(()=>{const lastP=c.precios&&c.precios[c.precios.length-1];if(!lastP)return'';return lastP.pago==='transferencia'?'<span style="background:rgba(39,174,96,.15);color:#27ae60;border-radius:6px;padding:2px 7px;font-size:10px;font-weight:700">📲 TRANSF</span>':'<span style="background:rgba(212,175,55,.12);color:var(--gold);border-radius:6px;padding:2px 7px;font-size:10px;font-weight:700">💵 EFECT</span>';})()}
           ${diasTxt?`<span class="${diasCls}">${diasTxt}</span>`:''}
           ${vm?`<span style="color:var(--gold);font-weight:600">📅 ${vm}x mes</span>`:''}
         </div>
@@ -917,10 +983,10 @@ function renderBarberos(){
     const mc=mis.reduce((a,c)=>a+vxMes(c),0);
     const tc=mis.reduce((a,c)=>a+c.cortes,0);
     const[si,sf]=getWeekRange(semOff);
-    const ing=mis.reduce((a,c)=>{
-      const ps=(c.precios||[]).filter(p=>p.fecha>=si&&p.fecha<=sf);
-      return a+ps.reduce((s,p)=>s+p.precio,0);
-    },0);
+    const psSem=mis.flatMap(c=>(c.precios||[]).filter(p=>p.fecha>=si&&p.fecha<=sf));
+    const ing=psSem.reduce((s,p)=>s+p.precio,0);
+    const ingEfect=psSem.filter(p=>p.pago!=='transferencia').reduce((s,p)=>s+p.precio,0);
+    const ingTransf=psSem.filter(p=>p.pago==='transferencia').reduce((s,p)=>s+p.precio,0);
     totSem+=ing;
     return`<div class="barb-card">
       <div class="barb-name">${b}</div>
@@ -932,7 +998,17 @@ function renderBarberos(){
       <div class="barb-divider"></div>
       <div class="barb-ing">$${ing.toLocaleString('es-AR')}</div>
       <div style="font-size:9px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-top:2px">Ingreso semana</div>
-      <div style="font-size:10px;color:var(--gray);margin-top:6px">${mis.length} clientes</div>
+      <div class="barb-divider"></div>
+      <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:4px">
+        <div style="background:rgba(212,175,55,.1);border-radius:6px;padding:5px 8px;text-align:center">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--gold)">$${Math.round(ingEfect/1000)}k</div>
+          <div style="font-size:8px;color:var(--gray);letter-spacing:1px">💵 EFECT</div>
+        </div>
+        <div style="background:rgba(39,174,96,.1);border-radius:6px;padding:5px 8px;text-align:center">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--green)">$${Math.round(ingTransf/1000)}k</div>
+          <div style="font-size:8px;color:var(--gray);letter-spacing:1px">📲 TRANSF</div>
+        </div>
+      </div>
     </div>`;
   }).join('');
   document.getElementById('ingresoTotal').textContent='$'+totSem.toLocaleString('es-AR');
