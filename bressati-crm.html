@@ -489,6 +489,42 @@ select option{background:#111}
   </div>
 </div>
 
+<!-- ══ MODAL EDITAR ══ -->
+<div class="modal-overlay" id="modalEditar">
+  <div class="modal">
+    <button class="modal-close" onclick="closeEditarModal()">✕</button>
+    <div class="modal-title">✏️ EDITAR CLIENTE</div>
+    <div class="modal-name" id="editarNombre"></div>
+    <input type="hidden" id="editarId">
+
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Barbero</label>
+      <select id="editarBarbero" style="background:#0d0d0d;border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:'Montserrat',sans-serif;font-size:13px;padding:10px 13px;width:100%">
+        <option value="">Sin asignar</option>
+        <option>Ivo</option><option>Gonza</option><option>Bruno</option><option>Marcos</option>
+      </select>
+    </div>
+
+    <div style="margin-bottom:16px">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:8px">Forma de pago del último corte</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div id="editBtnEfectivo" onclick="selEditPago('efectivo')" style="background:#0d0d0d;border:2px solid var(--border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .2s">
+          <div style="font-size:18px;margin-bottom:3px">💵</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--gray)">EFECTIVO</div>
+        </div>
+        <div id="editBtnTransferencia" onclick="selEditPago('transferencia')" style="background:#0d0d0d;border:2px solid var(--border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .2s">
+          <div style="font-size:18px;margin-bottom:3px">📲</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--gray)">TRANSFERENCIA</div>
+        </div>
+      </div>
+      <input type="hidden" id="editarPago" value="efectivo">
+    </div>
+
+    <button class="btn-add" onclick="guardarEdicion()">✦ &nbsp;GUARDAR CAMBIOS</button>
+    <p id="editarMsg" style="font-size:11px;color:var(--gold);min-height:16px;margin-top:8px;letter-spacing:1px;text-align:center"></p>
+  </div>
+</div>
+
 <!-- ══ MODAL ══ -->
 <div class="modal-overlay" id="modalWsp">
   <div class="modal">
@@ -523,6 +559,7 @@ select option{background:#111}
       <div class="historial-list" id="modalHistorial"></div>
     </div>
     <button class="btn-del" id="modalDelBtn">🗑 Eliminar cliente</button>
+    <button class="btn-del" id="modalEditBtn" style="border-color:rgba(212,175,55,.3);color:var(--gold);margin-top:6px" onclick="abrirEditarDesdeModal()">✏️ Editar barbero / forma de pago</button>
   </div>
 </div>
 
@@ -768,10 +805,12 @@ function abrirModal(id,perdido,mostrarSelector){
   document.getElementById('modalMsg').textContent=msg;
   document.getElementById('modalWspBtn').href='https://wa.me/'+tel+'?text='+encodeURIComponent(msg).replace(/%20/g,'+');
   document.getElementById('modalDelBtn').onclick=()=>eliminarCliente(id);
+  document.getElementById('modalEditBtn')._clientId=id;
   const sel=document.getElementById('modalPrecioSelector');
   document.getElementById('modalWspBtn').style.display=mostrarSelector?'none':'flex';
   document.getElementById('modalHistSection').style.display=mostrarSelector?'none':'block';
   document.getElementById('modalDelBtn').style.display=mostrarSelector?'none':'block';
+  document.getElementById('modalEditBtn').style.display=mostrarSelector?'none':'block';
   if(mostrarSelector){
     sel.style.display='block';
     const grupos=[
@@ -807,6 +846,63 @@ function abrirModal(id,perdido,mostrarSelector){
 }
 
 function closeModal(){document.getElementById('modalWsp').classList.remove('open')}
+
+function abrirEditarDesdeModal(){
+  const id=document.getElementById('modalEditBtn')._clientId;
+  closeModal();
+  setTimeout(()=>abrirEditar(id),150);
+}
+
+function abrirEditar(id){
+  const c=clientes.find(x=>x.id===id);if(!c)return;
+  document.getElementById('editarId').value=id;
+  document.getElementById('editarNombre').textContent=c.nombre;
+  document.getElementById('editarBarbero').value=c.barbero||'';
+  // Leer pago del último precio
+  const lastP=c.precios&&c.precios[c.precios.length-1];
+  const pagoActual=lastP&&lastP.pago?lastP.pago:'efectivo';
+  document.getElementById('editarPago').value=pagoActual;
+  selEditPago(pagoActual);
+  document.getElementById('editarMsg').textContent='';
+  document.getElementById('modalEditar').classList.add('open');
+}
+
+function closeEditarModal(){document.getElementById('modalEditar').classList.remove('open')}
+
+function selEditPago(tipo){
+  document.getElementById('editarPago').value=tipo;
+  const btnE=document.getElementById('editBtnEfectivo');
+  const btnT=document.getElementById('editBtnTransferencia');
+  if(tipo==='efectivo'){
+    btnE.style.background='rgba(212,175,55,.15)';btnE.style.borderColor='var(--gold)';
+    btnE.querySelector('div:last-child').style.color='var(--gold)';
+    btnT.style.background='#0d0d0d';btnT.style.borderColor='var(--border)';
+    btnT.querySelector('div:last-child').style.color='var(--gray)';
+  } else {
+    btnT.style.background='rgba(39,174,96,.15)';btnT.style.borderColor='var(--green)';
+    btnT.querySelector('div:last-child').style.color='var(--green)';
+    btnE.style.background='#0d0d0d';btnE.style.borderColor='var(--border)';
+    btnE.querySelector('div:last-child').style.color='var(--gray)';
+  }
+}
+
+async function guardarEdicion(){
+  const id=parseInt(document.getElementById('editarId').value);
+  const c=clientes.find(x=>x.id===id);if(!c)return;
+  c.barbero=document.getElementById('editarBarbero').value;
+  // Actualizar pago en el último registro
+  const nuevoPago=document.getElementById('editarPago').value;
+  if(c.precios&&c.precios.length>0){
+    c.precios[c.precios.length-1].pago=nuevoPago;
+  }
+  save();
+  mostrarSync('☁️ Guardando...');
+  await guardarEnNube(c);
+  ocultarSync();
+  renderAll();
+  document.getElementById('editarMsg').textContent='✓ Cambios guardados';
+  setTimeout(()=>closeEditarModal(),1000);
+}
 
 function eliminarCliente(id){
   if(!confirm('¿Eliminar este cliente?'))return;
@@ -886,6 +982,7 @@ function renderClientes(){
         <div><div class="cuts-num">${c.cortes}</div><div class="cuts-lbl">CORTES</div></div>
       </div>
       <div class="client-actions">
+        <button class="btn-icon" onclick="abrirEditar(${c.id})" title="Editar">✏️</button>
         <button class="btn-icon" onclick="abrirModal(${c.id},${perdido},false)">💬</button>
         <button class="btn-cut" onclick="sumarCorte(${c.id})">+1</button>
       </div>
@@ -1055,6 +1152,7 @@ function renderPerdidos(){
         <div><div class="cuts-num">${c.cortes}</div><div class="cuts-lbl">CORTES</div></div>
       </div>
       <div class="client-actions">
+        <button class="btn-icon" onclick="abrirEditar(${c.id})" title="Editar">✏️</button>
         <button class="btn-icon" onclick="abrirModal(${c.id},true,false)" title="Enviar recordatorio">💬</button>
         <button class="btn-cut" onclick="sumarCorte(${c.id})">+1</button>
       </div>
@@ -1065,6 +1163,7 @@ function renderPerdidos(){
 function renderAll(){renderStats();renderClientes()}
 cargarDesdeNube();
 document.getElementById('modalWsp').addEventListener('click',function(e){if(e.target===this)closeModal()});
+document.getElementById('modalEditar').addEventListener('click',function(e){if(e.target===this)closeEditarModal()});
 
 // ══ MÓDULO FINANZAS ══
 let finSemOff = 0;
