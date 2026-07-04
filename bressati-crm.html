@@ -693,10 +693,12 @@ function hoyStr(){
 }
 
 function getWeekRange(off=0){
-  const d=new Date(),day=d.getDay(),lu=new Date(d);
-  // Lunes a Sábado: lunes=inicio, sábado=fin
-  lu.setDate(d.getDate()-(day===0?6:day-1)+off*7);lu.setHours(0,0,0,0);
-  const sa=new Date(lu);sa.setDate(lu.getDate()+5); // 5 días después = sábado
+  const d=new Date(),day=d.getDay();
+  const lu=new Date(d);
+  // Domingo (0) cuenta como inicio de la semana siguiente
+  const diasDesdeLunes=day===0?-6:1-day;
+  lu.setDate(d.getDate()+diasDesdeLunes+off*7);lu.setHours(0,0,0,0);
+  const sa=new Date(lu);sa.setDate(lu.getDate()+5);
   return[lu.toISOString().split('T')[0],sa.toISOString().split('T')[0]];
 }
 
@@ -1343,9 +1345,11 @@ async function cargarVentasCera(){
 }
 
 function finGetWeekRange(off=0){
-  const d=new Date(),day=d.getDay(),lu=new Date(d);
-  lu.setDate(d.getDate()-(day===0?6:day-1)+off*7);lu.setHours(0,0,0,0);
-  const sa=new Date(lu);sa.setDate(lu.getDate()+5); // sábado
+  const d=new Date(),day=d.getDay();
+  const lu=new Date(d);
+  const diasDesdeLunes=day===0?-6:1-day;
+  lu.setDate(d.getDate()+diasDesdeLunes+off*7);lu.setHours(0,0,0,0);
+  const sa=new Date(lu);sa.setDate(lu.getDate()+5);
   return[lu.toISOString().split('T')[0],sa.toISOString().split('T')[0]];
 }
 
@@ -1716,4 +1720,3 @@ async function renderPagos(){
 </script>
 </body>
 </html>
-
