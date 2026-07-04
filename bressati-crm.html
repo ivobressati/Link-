@@ -267,6 +267,14 @@ select option{background:#111}
       </div>
       <div class="precio-box-num" id="precioFormNum">$0</div>
     </div>
+    <div id="btnComisionExtra" onclick="toggleComisionExtra()" style="background:#0d0d0d;border:2px solid var(--border);border-radius:10px;padding:13px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .2s">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--gray)">COMISIÓN ESPECIAL</div>
+        <div style="font-size:10px;color:var(--gray);margin-top:2px" id="txtComisionExtra">Tocá para marcar como 80%</div>
+      </div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gray)" id="badgeComisionExtra">50%</div>
+    </div>
+    <input type="hidden" id="fComision" value="50">
     <button class="btn-add" onclick="agregarCliente()">✦ &nbsp;REGISTRAR CLIENTE Y ENVIAR BIENVENIDA</button>
   </div>
   <div class="sec-title">Clientes</div>
@@ -426,7 +434,16 @@ select option{background:#111}
     </div>
   </div>
 
-  <div class="sec-title" style="margin-top:8px">Estadísticas Financieras</div>
+  <div class="sec-title" style="margin-top:8px">Hoy</div>
+  <div class="form-card" style="margin-bottom:16px;padding:16px">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:10px;overflow:hidden;border:1px solid var(--border)" id="finHoyGrid">
+      <div class="stat"><div class="stat-num" id="finHoyCortes">0</div><div class="stat-lbl">Cortes</div></div>
+      <div class="stat"><div class="stat-num" id="finHoyIngreso">$0</div><div class="stat-lbl">Ingreso</div></div>
+      <div class="stat"><div class="stat-num" style="color:var(--gold)" id="finHoyEfect">$0</div><div class="stat-lbl">💵 Efect</div></div>
+      <div class="stat"><div class="stat-num" style="color:var(--green)" id="finHoyTransf">$0</div><div class="stat-lbl">📲 Transf</div></div>
+    </div>
+  </div>
+  <div class="sec-title">Estadísticas Financieras</div>
   <div class="form-card" style="margin-bottom:20px">
     <div class="week-nav" style="margin-bottom:16px">
       <button onclick="finCambiarSemana(-1)">◀</button>
@@ -548,6 +565,34 @@ select option{background:#111}
         </div>
         <input type="hidden" id="fPagoModal" value="efectivo">
       </div>
+      <div style="margin-top:12px">
+        <div class="mps-title">Barbero que cortó</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+          <div class="mps-btn" onclick="selBarberoModal('Ivo')" id="mbarb_Ivo">
+            <div style="font-size:16px">👑</div><div class="mp-name">Ivo</div>
+          </div>
+          <div class="mps-btn" onclick="selBarberoModal('Gonza')" id="mbarb_Gonza">
+            <div style="font-size:16px">✂️</div><div class="mp-name">Gonza</div>
+          </div>
+          <div class="mps-btn" onclick="selBarberoModal('Bruno')" id="mbarb_Bruno">
+            <div style="font-size:16px">✂️</div><div class="mp-name">Bruno</div>
+          </div>
+          <div class="mps-btn" onclick="selBarberoModal('Marcos')" id="mbarb_Marcos">
+            <div style="font-size:16px">✂️</div><div class="mp-name">Marcos</div>
+          </div>
+        </div>
+        <input type="hidden" id="fBarberoModal" value="">
+      </div>
+      <div style="margin-top:12px">
+        <div id="btn80pct" onclick="toggle80pct()" style="background:#0d0d0d;border:2px solid var(--border);border-radius:10px;padding:12px 16px;text-align:center;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:var(--gray)">Comisión especial</div>
+            <div style="font-size:10px;color:var(--gray);margin-top:2px">Tocá para marcar como 80%</div>
+          </div>
+          <div id="badge80pct" style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gray)">50%</div>
+        </div>
+        <input type="hidden" id="fComisionModal" value="50">
+      </div>
     </div>
     <div class="wsp-msg" id="modalMsg"></div>
     <a id="modalWspBtn" href="#" target="_blank" class="btn-wsp">
@@ -633,7 +678,16 @@ function getRango(n){
   return{nombre:'BRONCE',emoji:'🥉',cls:'bronce',sig:'PLATA',falta:6-n,desc:'Sin descuento'};
 }
 
-function hoyStr(){return new Date().toISOString().split('T')[0]}
+function hoyStr(){
+  const now=new Date();
+  // Si es antes de las 9am, contar como día anterior
+  if(now.getHours()<9){
+    const ayer=new Date(now);
+    ayer.setDate(ayer.getDate()-1);
+    return ayer.toISOString().split('T')[0];
+  }
+  return now.toISOString().split('T')[0];
+}
 
 function getWeekRange(off=0){
   const d=new Date(),day=d.getDay(),lu=new Date(d);
@@ -679,6 +733,64 @@ function selPago(tipo){
   }
 }
 
+function toggleComisionExtra(){
+  const input=document.getElementById('fComision');
+  const btn=document.getElementById('btnComisionExtra');
+  const badge=document.getElementById('badgeComisionExtra');
+  const txt=document.getElementById('txtComisionExtra');
+  if(input.value==='50'){
+    input.value='80';
+    btn.style.borderColor='var(--gold)';
+    btn.style.background='rgba(212,175,55,.1)';
+    badge.style.color='var(--gold)';
+    badge.textContent='80%';
+    txt.textContent='Marcado como 80%';
+    txt.style.color='var(--gold)';
+  } else {
+    input.value='50';
+    btn.style.borderColor='var(--border)';
+    btn.style.background='#0d0d0d';
+    badge.style.color='var(--gray)';
+    badge.textContent='50%';
+    txt.textContent='Tocá para marcar como 80%';
+    txt.style.color='var(--gray)';
+  }
+}
+
+function toggle80pct(){
+  const input=document.getElementById('fComisionModal');
+  const btn=document.getElementById('btn80pct');
+  const badge=document.getElementById('badge80pct');
+  if(input.value==='50'){
+    input.value='80';
+    btn.style.borderColor='var(--gold)';
+    btn.style.background='rgba(212,175,55,.1)';
+    badge.style.color='var(--gold)';
+    badge.textContent='80%';
+    btn.querySelector('div div:last-child').textContent='Marcado como 80%';
+  } else {
+    input.value='50';
+    btn.style.borderColor='var(--border)';
+    btn.style.background='#0d0d0d';
+    badge.style.color='var(--gray)';
+    badge.textContent='50%';
+    btn.querySelector('div div:last-child').textContent='Tocá para marcar como 80%';
+  }
+}
+
+function selBarberoModal(nombre){
+  document.getElementById('fBarberoModal').value=nombre;
+  ['Ivo','Gonza','Bruno','Marcos'].forEach(b=>{
+    const btn=document.getElementById('mbarb_'+b);
+    if(!btn)return;
+    if(b===nombre){
+      btn.style.borderColor='var(--gold)';btn.style.background='rgba(212,175,55,.12)';
+    } else {
+      btn.style.borderColor='var(--border)';btn.style.background='#0d0d0d';
+    }
+  });
+}
+
 function selPagoModal(tipo){
   document.getElementById('fPagoModal').value=tipo;
   const btnE=document.getElementById('mbtnEfectivo');
@@ -699,6 +811,14 @@ function selPagoModal(tipo){
 function selServicio(el){
   document.querySelectorAll('.srv-opt').forEach(e=>e.classList.remove('selected'));
   selPago('efectivo');
+  // Resetear comisión
+  const fC=document.getElementById('fComision');if(fC)fC.value='50';
+  const bCE=document.getElementById('btnComisionExtra');
+  const badgeCE=document.getElementById('badgeComisionExtra');
+  const txtCE=document.getElementById('txtComisionExtra');
+  if(bCE){bCE.style.borderColor='var(--border)';bCE.style.background='#0d0d0d';}
+  if(badgeCE){badgeCE.style.color='var(--gray)';badgeCE.textContent='50%';}
+  if(txtCE){txtCE.textContent='Tocá para marcar como 80%';txtCE.style.color='var(--gray)';}
   el.classList.add('selected');
   const id=el.dataset.id,turno=el.dataset.turno;
   document.getElementById('fServicio').value=id;
@@ -750,6 +870,7 @@ function agregarCliente(){
   const servicio=document.getElementById('fServicio').value;
   const precio=getPrecio(servicio);
   const pago=document.getElementById('fPago').value||'efectivo';
+  const comision=parseInt(document.getElementById('fComision').value)||50;
   const nuevo={id,nombre,tel,
     email:document.getElementById('fEmail').value.trim(),
     insta:document.getElementById('fInsta').value.trim(),
@@ -757,7 +878,7 @@ function agregarCliente(){
     turno:document.getElementById('fTurno').value,
     servicio,cortes:1,
     visitas:[hoy],
-    precios:[{fecha:hoy,precio,servicio,pago}],
+    precios:[{fecha:hoy,precio,servicio,pago,comision}],
     creado:hoy};
   clientes.unshift(nuevo);
   save();
@@ -780,10 +901,13 @@ function confirmarCorte(id,servId){
   const hoy=hoyStr();
   c.visitas.push(hoy);
   const pagoModal=document.getElementById('fPagoModal')?document.getElementById('fPagoModal').value:'efectivo';
+  const barbModal=document.getElementById('fBarberoModal')?document.getElementById('fBarberoModal').value:c.barbero;
+  if(barbModal) c.barbero=barbModal;
   if(servId){
     c.servicio=servId;
     if(!c.precios)c.precios=[];
-    c.precios.push({fecha:hoy,precio:getPrecio(servId),servicio:servId,pago:pagoModal});
+    const comisionModal=document.getElementById('fComisionModal')?parseInt(document.getElementById('fComisionModal').value):50;
+  c.precios.push({fecha:hoy,precio:getPrecio(servId),servicio:servId,pago:pagoModal,barbero:barbModal||c.barbero,comision:comisionModal});
   }
   save();
   mostrarSync('☁️ Guardando...');
@@ -813,6 +937,18 @@ function abrirModal(id,perdido,mostrarSelector){
   document.getElementById('modalEditBtn').style.display=mostrarSelector?'none':'block';
   if(mostrarSelector){
     sel.style.display='block';
+    // Resetear toggle 80%
+    const inp80=document.getElementById('fComisionModal');
+    if(inp80){inp80.value='50';const btn80=document.getElementById('btn80pct');const badge80=document.getElementById('badge80pct');if(btn80){btn80.style.borderColor='var(--border)';btn80.style.background='#0d0d0d';badge80.style.color='var(--gray)';badge80.textContent='50%';btn80.querySelector('div div:last-child').textContent='Tocá para marcar como 80%';}}
+    // Pre-seleccionar barbero actual
+    const barbActual=c.barbero||'';
+    document.getElementById('fBarberoModal').value=barbActual;
+    ['Ivo','Gonza','Bruno','Marcos'].forEach(b=>{
+      const btn=document.getElementById('mbarb_'+b);
+      if(!btn)return;
+      if(b===barbActual){btn.style.borderColor='var(--gold)';btn.style.background='rgba(212,175,55,.12)';}
+      else{btn.style.borderColor='var(--border)';btn.style.background='#0d0d0d';}
+    });
     const grupos=[
       {label:'📋 ORDEN DE LLEGADA', badge:'badge-llegada', items:PRECIOS.filter(p=>p.tipo==='Orden llegada')},
       {label:'🗓 CON TURNO — GONZA / BRUNO / MARCOS', badge:'badge-turno', items:PRECIOS.filter(p=>p.barbero==='Gonza/Bruno/Marcos')},
@@ -835,10 +971,24 @@ function abrirModal(id,perdido,mostrarSelector){
         const idx=c.visitas.length-1-i;
         const pr=c.precios&&c.precios[idx];
         const d=new Date(v);
-        const pNom=pr?PRECIOS.find(x=>x.id===pr.servicio):'';
-        return`<div class="hist-item">
-          <div><span style="color:var(--white)">${d.getDate()} ${ms[d.getMonth()]} ${d.getFullYear()}</span><br><span style="font-size:10px">${pNom?pNom.nombre:''}</span></div>
-          <div class="hi-precio">${pr?'$'+pr.precio.toLocaleString('es-AR'):''}</div>
+        const pNom=pr?PRECIOS.find(x=>x.id===pr.servicio):null;
+        const barberoPR=pr&&pr.barbero?pr.barbero:(c.barbero||'');
+        const pagoPR=pr&&pr.pago?pr.pago:'';
+        const pagoBadge=pagoPR==='transferencia'
+          ?'<span style="background:rgba(39,174,96,.15);color:#27ae60;border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700">📲</span>'
+          :pagoPR==='efectivo'?'<span style="background:rgba(212,175,55,.12);color:var(--gold);border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700">💵</span>':'';
+        const comisionBadge=pr&&pr.comision===80?'<span style="background:rgba(212,175,55,.2);color:var(--gold);border:1px solid var(--gold);border-radius:4px;padding:1px 6px;font-size:9px;font-weight:800">80%</span>':'';
+        return`<div class="hist-item" style="flex-direction:column;align-items:flex-start;gap:4px;padding:10px 12px">
+          <div style="display:flex;justify-content:space-between;width:100%;align-items:center">
+            <span style="color:var(--white);font-weight:600">${d.getDate()} ${ms[d.getMonth()]} ${d.getFullYear()}</span>
+            <span class="hi-precio">${pr?'$'+pr.precio.toLocaleString('es-AR'):''}</span>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            ${barberoPR?`<span style="font-size:10px;color:var(--gold)">✂️ ${barberoPR}</span>`:''}
+            ${pNom?`<span style="font-size:10px;color:var(--gray)">${pNom.nombre}</span>`:''}
+            ${pagoBadge}
+            ${comisionBadge}
+          </div>
         </div>`;
       }).join('')
     :'<div style="font-size:11px;color:var(--gray);padding:8px">Sin visitas aún</div>';
@@ -1085,9 +1235,21 @@ function renderBarberos(){
     const ingEfect=psSem.filter(p=>p.pago!=='transferencia').reduce((s,p)=>s+p.precio,0);
     const ingTransf=psSem.filter(p=>p.pago==='transferencia').reduce((s,p)=>s+p.precio,0);
     totSem+=ing;
+    const hoyLocal=hoyStr();
+    const cortesHoy=mis.reduce((a,c)=>a+(c.visitas||[]).filter(v=>v===hoyLocal).length,0);
+    const ingHoy=mis.reduce((a,c)=>{
+      const ps=(c.precios||[]).filter(p=>p.fecha===hoyLocal);
+      return a+ps.reduce((s,p)=>s+(p.precio||0),0);
+    },0);
     return`<div class="barb-card">
       <div class="barb-name">${b}</div>
-      <div><div class="barb-num">${sc}</div><div class="barb-lbl">Cortes semana</div></div>
+      <div style="background:rgba(212,175,55,.08);border-radius:8px;padding:8px;margin-bottom:8px">
+        <div class="barb-num" style="font-size:36px">${cortesHoy}</div>
+        <div class="barb-lbl">Cortes hoy</div>
+        <div style="font-size:12px;font-weight:700;color:var(--gold);margin-top:2px">$${ingHoy.toLocaleString('es-AR')}</div>
+      </div>
+      <div class="barb-divider"></div>
+      <div><div class="barb-num">${sc}</div><div class="barb-lbl">Esta semana</div></div>
       <div class="barb-divider"></div>
       <div><div class="barb-num">${mc}</div><div class="barb-lbl">Este mes</div></div>
       <div class="barb-divider"></div>
@@ -1253,6 +1415,18 @@ async function renderFinanzas(){
   const ingMes=calcIngresosMes();
   const[gastoSem,gastoMes]=await Promise.all([getGastosSemana(finSemOff),getGastosMes()]);
   const netaSem=ingSem-gastoSem,netaMes=ingMes-gastoMes;
+  // Stats de hoy
+  const hoyF=hoyStr();
+  const cortesHoyF=clientes.reduce((a,c)=>a+(c.visitas||[]).filter(v=>v===hoyF).length,0);
+  const psHoy=clientes.flatMap(c=>(c.precios||[]).filter(p=>p.fecha===hoyF));
+  const ingHoyF=psHoy.reduce((s,p)=>s+(p.precio||0),0);
+  const efectHoy=psHoy.filter(p=>p.pago!=='transferencia').reduce((s,p)=>s+(p.precio||0),0);
+  const transfHoy=psHoy.filter(p=>p.pago==='transferencia').reduce((s,p)=>s+(p.precio||0),0);
+  document.getElementById('finHoyCortes').textContent=cortesHoyF;
+  document.getElementById('finHoyIngreso').textContent='$'+Math.round(ingHoyF/1000)+'k';
+  document.getElementById('finHoyEfect').textContent='$'+Math.round(efectHoy/1000)+'k';
+  document.getElementById('finHoyTransf').textContent='$'+Math.round(transfHoy/1000)+'k';
+
   document.getElementById('rqIngSem').textContent=formatARS(ingSem);
   document.getElementById('rqGastoSem').textContent=formatARS(gastoSem);
   pintarVal('rqNetaSem',netaSem);
