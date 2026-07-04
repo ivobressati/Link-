@@ -704,8 +704,8 @@ function getWeekRange(off=0){
 
 function weekLabel(off){
   if(off===0)return'Esta semana';if(off===-1)return'Semana pasada';
-  const[i]=getWeekRange(off),d=new Date(i),ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  const[,f]=getWeekRange(off),df=new Date(f);
+  const[i]=getWeekRange(off),d=new Date(i+'T12:00:00'),ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const[,f]=getWeekRange(off),df=new Date(f+'T12:00:00');
   return`${d.getDate()} ${ms[d.getMonth()]} – ${df.getDate()} ${ms[df.getMonth()]}`;
 }
 
@@ -1584,7 +1584,7 @@ async function renderPagos(){
   const [ini,fin]=getWeekRange(pagosSemOff);
   document.getElementById('pagosWeekLabel').textContent=weekLabel(pagosSemOff);
   const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  const diIni=new Date(ini),diFin=new Date(fin);
+  const diIni=new Date(ini+'T12:00:00'),diFin=new Date(fin+'T12:00:00');
   const periodoTxt=`${diIni.getDate()} ${ms[diIni.getMonth()]} – ${diFin.getDate()} ${ms[diFin.getMonth()]}`;
 
   let totalBruto=0;
