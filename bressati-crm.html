@@ -504,6 +504,9 @@ select option{background:#111}
     <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;line-height:1;margin-bottom:4px" id="pagosNeta">$0</div>
     <div style="font-size:10px;color:var(--gray);letter-spacing:1px">50% cortes + ventas de productos − gastos de la semana</div>
   </div>
+
+  <div class="sec-title" style="margin-top:24px">📋 Resumen por Barbero</div>
+  <div id="pagosResumenBarberos" style="display:flex;flex-direction:column;gap:10px"></div>
 </div>
 
 <!-- ══ MODAL EDITAR ══ -->
@@ -691,8 +694,9 @@ function hoyStr(){
 
 function getWeekRange(off=0){
   const d=new Date(),day=d.getDay(),lu=new Date(d);
+  // Lunes a Sábado: lunes=inicio, sábado=fin
   lu.setDate(d.getDate()-(day===0?6:day-1)+off*7);lu.setHours(0,0,0,0);
-  const sa=new Date(lu);sa.setDate(lu.getDate()+6);
+  const sa=new Date(lu);sa.setDate(lu.getDate()+5); // 5 días después = sábado
   return[lu.toISOString().split('T')[0],sa.toISOString().split('T')[0]];
 }
 
@@ -1341,7 +1345,7 @@ async function cargarVentasCera(){
 function finGetWeekRange(off=0){
   const d=new Date(),day=d.getDay(),lu=new Date(d);
   lu.setDate(d.getDate()-(day===0?6:day-1)+off*7);lu.setHours(0,0,0,0);
-  const sa=new Date(lu);sa.setDate(lu.getDate()+6);
+  const sa=new Date(lu);sa.setDate(lu.getDate()+5); // sábado
   return[lu.toISOString().split('T')[0],sa.toISOString().split('T')[0]];
 }
 
@@ -1616,6 +1620,68 @@ async function renderPagos(){
 
   const iconos={Ivo:'👑',Gonza:'✂️',Bruno:'✂️',Marcos:'✂️'};
 
+  // Resumen detallado por barbero
+  document.getElementById('pagosResumenBarberos').innerHTML=items.map(b=>{
+    const mis=clientes.filter(c=>c.barbero===b.nombre);
+    const psSem=mis.flatMap(c=>(c.precios||[]).filter(p=>p.fecha>=ini&&p.fecha<=fin));
+    const efectivo=psSem.filter(p=>p.pago!=='transferencia').reduce((s,p)=>s+(p.precio||0),0);
+    const transf=psSem.filter(p=>p.pago==='transferencia').reduce((s,p)=>s+(p.precio||0),0);
+    const cortes80=psSem.filter(p=>p.comision===80).length;
+    const cortes50=psSem.filter(p=>p.comision!==80).length;
+    if(b.cortesSem===0) return`<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gray)">${b.nombre}</div>
+      <div style="font-size:11px;color:var(--gray)">Sin cortes esta semana</div>
+    </div>`;
+    return`<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+      <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--white)">${b.nombre}</div>
+        <div style="text-align:right">
+          <div style="font-size:9px;color:var(--gray);letter-spacing:1px;text-transform:uppercase">Le corresponde</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);line-height:1">$${b.pago.toLocaleString('es-AR')}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);background:#0d0d0d;border-bottom:1px solid var(--border)">
+        <div style="padding:10px;text-align:center;border-right:1px solid var(--border)">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--white)">${b.cortesSem}</div>
+          <div style="font-size:9px;color:var(--gray);letter-spacing:1px">TOTAL SEM</div>
+        </div>
+        <div style="padding:10px;text-align:center;border-right:1px solid var(--border)">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold)">${cortes50}</div>
+          <div style="font-size:9px;color:var(--gray);letter-spacing:1px">AL 50%</div>
+        </div>
+        <div style="padding:10px;text-align:center">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold)">${cortes80}</div>
+          <div style="font-size:9px;color:var(--gray);letter-spacing:1px">AL 80%</div>
+        </div>
+      </div>
+      <div style="background:#0d0d0d;border-bottom:1px solid var(--border);padding:10px 12px">
+        <div style="font-size:9px;color:var(--gray);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Cortes por día</div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px">
+          ${['Lu','Ma','Mi','Ju','Vi','Sa'].map((dia,i)=>{
+            const fechaDia=new Date(ini);fechaDia.setDate(fechaDia.getDate()+i);
+            const diaStr=fechaDia.toISOString().split('T')[0];
+            const cnt=mis.reduce((a,c)=>a+(c.visitas||[]).filter(v=>v===diaStr).length,0);
+            const esHoy=diaStr===hoyStr();
+            return`<div style="background:${cnt>0?'rgba(212,175,55,.12)':'rgba(255,255,255,.03)'};border:1px solid ${esHoy?'var(--gold)':cnt>0?'rgba(212,175,55,.3)':'var(--border)'};border-radius:6px;padding:6px 4px;text-align:center">
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:${cnt>0?'var(--gold)':'var(--gray)'};line-height:1">${cnt}</div>
+              <div style="font-size:8px;color:${esHoy?'var(--gold)':'var(--gray)'};letter-spacing:1px;margin-top:2px">${dia}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;background:#0d0d0d">
+        <div style="padding:10px;text-align:center;border-right:1px solid var(--border)">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gold)">$${Math.round(efectivo/1000)}k</div>
+          <div style="font-size:9px;color:var(--gray);letter-spacing:1px">💵 EFECTIVO</div>
+        </div>
+        <div style="padding:10px;text-align:center">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--green)">$${Math.round(transf/1000)}k</div>
+          <div style="font-size:9px;color:var(--gray);letter-spacing:1px">📲 TRANSF</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
   document.getElementById('pagosList').innerHTML=items.map(b=>`
     <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden">
       <div style="padding:16px;display:flex;align-items:center;gap:14px">
@@ -1650,3 +1716,4 @@ async function renderPagos(){
 </script>
 </body>
 </html>
+
