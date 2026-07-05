@@ -180,23 +180,30 @@ select option{background:#111}
   <div style="height:20px"></div>
   <div class="stats">
     <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Clientes</div></div>
-    <div class="stat"><div class="stat-num" id="statHoy">0</div><div class="stat-lbl">Hoy</div></div>
+    <div class="stat"><div class="stat-num" id="statHoy">0</div><div class="stat-lbl" id="statHoyLabel">Hoy</div></div>
     <div class="stat"><div class="stat-num" id="statSemana">0</div><div class="stat-lbl">Semana</div></div>
     <div class="stat"><div class="stat-num" id="statDiamante">0</div><div class="stat-lbl">Diamantes</div></div>
   </div>
   <div class="sec-title">Agregar Cliente</div>
   <div class="form-card">
     <div class="form-grid">
-      <div class="form-group"><label>Nombre y Apellido *</label><input type="text" id="fNombre" placeholder="Juan Pérez"></div>
-      <div class="form-group"><label>Teléfono (WhatsApp) *</label><input type="tel" id="fTel" placeholder="3541 123456"></div>
-      <div class="form-group"><label>Gmail</label><input type="email" id="fEmail" placeholder="juan@gmail.com"></div>
-      <div class="form-group"><label>Instagram</label><input type="text" id="fInsta" placeholder="@usuario"></div>
-      <div class="form-group" style="grid-column:1/-1"><label>Barbero</label>
+      <div class="form-group" style="grid-column:1/-1">
+        <label style="font-size:11px;letter-spacing:2px;color:var(--gold);font-weight:700">NOMBRE Y APELLIDO *</label>
+        <input type="text" id="fNombre" placeholder="Juan Pérez">
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label style="font-size:11px;letter-spacing:2px;color:var(--gold);font-weight:700">TELÉFONO (WHATSAPP) *</label>
+        <input type="tel" id="fTel" placeholder="3541 123456">
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label style="font-size:11px;letter-spacing:2px;color:var(--gold);font-weight:700">BARBERO</label>
         <select id="fBarbero">
           <option value="">Sin asignar</option><option>Ivo</option><option>Gonza</option><option>Bruno</option><option>Marcos</option>
         </select>
       </div>
     </div>
+    <input type="hidden" id="fEmail" value="">
+    <input type="hidden" id="fInsta" value="">
     <div style="margin-bottom:14px">
       <div style="font-size:10px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:8px">Forma de pago</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
@@ -443,6 +450,50 @@ select option{background:#111}
       <div class="stat"><div class="stat-num" style="color:var(--green)" id="finHoyTransf">$0</div><div class="stat-lbl">📲 Transf</div></div>
     </div>
   </div>
+  <div class="sec-title">Balance</div>
+  <div class="form-card" style="margin-bottom:20px;padding:0;overflow:hidden">
+    <!-- Selector semana/mes -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;background:#0d0d0d">
+      <div id="balTabSem" onclick="setBalTab('sem')" style="padding:12px;text-align:center;cursor:pointer;border-bottom:2px solid var(--gold);font-size:11px;font-weight:700;letter-spacing:2px;color:var(--gold)">SEMANA</div>
+      <div id="balTabMes" onclick="setBalTab('mes')" style="padding:12px;text-align:center;cursor:pointer;border-bottom:2px solid transparent;font-size:11px;font-weight:700;letter-spacing:2px;color:var(--gray)">MES</div>
+    </div>
+    <div style="padding:16px">
+      <!-- INGRESOS -->
+      <div style="font-size:9px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:10px">Ingresos</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div style="font-size:13px;color:var(--white)">✂️ Cortes</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold)" id="balCortes">$0</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div style="font-size:13px;color:var(--white)">💈 Productos</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold)" id="balProductos">$0</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(212,175,55,.2)">
+        <div style="font-size:12px;font-weight:700;color:var(--gold)">Total ingresos</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold)" id="balTotalIng">$0</div>
+      </div>
+      <!-- EGRESOS -->
+      <div style="font-size:9px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin:14px 0 10px">Egresos</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div style="font-size:13px;color:var(--white)">👥 Sueldos barberos</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--red)" id="balSueldos">$0</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div style="font-size:13px;color:var(--white)">💸 Gastos</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--red)" id="balGastos">$0</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.1)">
+        <div style="font-size:12px;font-weight:700;color:var(--red)">Total egresos</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--red)" id="balTotalEgr">$0</div>
+      </div>
+      <!-- NETA -->
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0 4px">
+        <div style="font-size:14px;font-weight:800;letter-spacing:1px;color:var(--white)">🏆 Ganancia neta</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;line-height:1" id="balNeta">$0</div>
+      </div>
+    </div>
+  </div>
+
   <div class="sec-title">Estadísticas Financieras</div>
   <div class="form-card" style="margin-bottom:20px">
     <div class="week-nav" style="margin-bottom:16px">
@@ -683,23 +734,24 @@ function getRango(n){
 
 function hoyStr(){
   const now=new Date();
-  // Si es antes de las 9am, contar como día anterior
-  if(now.getHours()<9){
-    const ayer=new Date(now);
-    ayer.setDate(ayer.getDate()-1);
-    return ayer.toISOString().split('T')[0];
-  }
-  return now.toISOString().split('T')[0];
+  const h=now.getHours();
+  // Día válido: 9am a 11pm. Antes de las 9 cuenta como ayer.
+  const base=new Date(now);
+  if(h<9) base.setDate(base.getDate()-1);
+  return `${base.getFullYear()}-${String(base.getMonth()+1).padStart(2,'0')}-${String(base.getDate()).padStart(2,'0')}`;
 }
 
 function getWeekRange(off=0){
-  const d=new Date(),day=d.getDay();
-  const lu=new Date(d);
-  // Domingo (0) cuenta como inicio de la semana siguiente
-  const diasDesdeLunes=day===0?-6:1-day;
-  lu.setDate(d.getDate()+diasDesdeLunes+off*7);lu.setHours(0,0,0,0);
-  const sa=new Date(lu);sa.setDate(lu.getDate()+5);
-  return[lu.toISOString().split('T')[0],sa.toISOString().split('T')[0]];
+  const now=new Date();
+  const fmt=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const day=now.getDay(); // 0=dom,1=lun...6=sab
+  // Domingo: va a semana siguiente (off+1 desde lunes)
+  const diasDesde=day===0?-6:1-day;
+  const lu=new Date(now);
+  lu.setDate(now.getDate()+diasDesde+off*7);
+  lu.setHours(0,0,0,0);
+  const sa=new Date(lu);sa.setDate(lu.getDate()+5); // sábado
+  return[fmt(lu),fmt(sa)];
 }
 
 function weekLabel(off){
@@ -972,32 +1024,38 @@ function abrirModal(id,perdido,mostrarSelector){
   }
   const hist=[...(c.visitas||[])].reverse().slice(0,20);
   const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const dias=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
   document.getElementById('modalHistorial').innerHTML=hist.length
     ?hist.map((v,i)=>{
         const idx=c.visitas.length-1-i;
         const pr=c.precios&&c.precios[idx];
-        const d=new Date(v);
+        const d=new Date(v+'T12:00:00');
         const pNom=pr?PRECIOS.find(x=>x.id===pr.servicio):null;
         const barberoPR=pr&&pr.barbero?pr.barbero:(c.barbero||'');
         const pagoPR=pr&&pr.pago?pr.pago:'';
         const pagoBadge=pagoPR==='transferencia'
-          ?'<span style="background:rgba(39,174,96,.15);color:#27ae60;border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700">📲</span>'
-          :pagoPR==='efectivo'?'<span style="background:rgba(212,175,55,.12);color:var(--gold);border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700">💵</span>':'';
-        const comisionBadge=pr&&pr.comision===80?'<span style="background:rgba(212,175,55,.2);color:var(--gold);border:1px solid var(--gold);border-radius:4px;padding:1px 6px;font-size:9px;font-weight:800">80%</span>':'';
-        return`<div class="hist-item" style="flex-direction:column;align-items:flex-start;gap:4px;padding:10px 12px">
-          <div style="display:flex;justify-content:space-between;width:100%;align-items:center">
-            <span style="color:var(--white);font-weight:600">${d.getDate()} ${ms[d.getMonth()]} ${d.getFullYear()}</span>
-            <span class="hi-precio">${pr?'$'+pr.precio.toLocaleString('es-AR'):''}</span>
+          ?'<span style="background:rgba(39,174,96,.15);color:#27ae60;border-radius:6px;padding:2px 7px;font-size:10px;font-weight:700">📲 Transferencia</span>'
+          :pagoPR==='efectivo'?'<span style="background:rgba(212,175,55,.12);color:var(--gold);border-radius:6px;padding:2px 7px;font-size:10px;font-weight:700">💵 Efectivo</span>':'';
+        const comisionBadge=pr&&pr.comision===80
+          ?'<span style="background:rgba(212,175,55,.2);color:var(--gold);border:1px solid var(--gold);border-radius:6px;padding:2px 7px;font-size:10px;font-weight:800">80%</span>'
+          :'<span style="background:rgba(255,255,255,.05);color:var(--gray);border-radius:6px;padding:2px 7px;font-size:10px;font-weight:700">50%</span>';
+        return`<div style="background:#0d0d0d;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:6px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <div style="color:var(--white);font-weight:700;font-size:13px">${dias[d.getDay()]} ${d.getDate()} ${ms[d.getMonth()]} ${d.getFullYear()}</div>
+              <div style="font-size:11px;color:var(--gray);margin-top:2px">Visita #${c.visitas.length-i}</div>
+            </div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold)">${pr?'$'+pr.precio.toLocaleString('es-AR'):''}</div>
           </div>
-          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-            ${barberoPR?`<span style="font-size:10px;color:var(--gold)">✂️ ${barberoPR}</span>`:''}
-            ${pNom?`<span style="font-size:10px;color:var(--gray)">${pNom.nombre}</span>`:''}
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+            ${barberoPR?`<span style="background:rgba(212,175,55,.08);color:var(--gold);border-radius:6px;padding:2px 7px;font-size:10px;font-weight:700">✂️ ${barberoPR}</span>`:''}
+            ${pNom?`<span style="background:rgba(255,255,255,.05);color:var(--white);border-radius:6px;padding:2px 7px;font-size:10px">${pNom.nombre}</span>`:''}
             ${pagoBadge}
             ${comisionBadge}
           </div>
         </div>`;
       }).join('')
-    :'<div style="font-size:11px;color:var(--gray);padding:8px">Sin visitas aún</div>';
+    :'<div style="text-align:center;padding:20px;color:var(--gray);font-size:12px">Sin visitas registradas aún</div>';
   document.getElementById('modalWsp').classList.add('open');
 }
 
@@ -1094,6 +1152,9 @@ function setFiltro(f){
 function cambiarSemana(d){semOff+=d;if(semOff>0)semOff=0;renderBarberos()}
 
 function renderStats(){
+  const dias=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const lbl=document.getElementById('statHoyLabel');
+  if(lbl) lbl.textContent=dias[new Date().getDay()];
   const hoy=hoyStr(),[ini]=getWeekRange(0);
   document.getElementById('statTotal').textContent=clientes.length;
   document.getElementById('statDiamante').textContent=clientes.filter(c=>c.cortes>=30).length;
@@ -1345,12 +1406,15 @@ async function cargarVentasCera(){
 }
 
 function finGetWeekRange(off=0){
-  const d=new Date(),day=d.getDay();
-  const lu=new Date(d);
-  const diasDesdeLunes=day===0?-6:1-day;
-  lu.setDate(d.getDate()+diasDesdeLunes+off*7);lu.setHours(0,0,0,0);
+  const now=new Date();
+  const fmt=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const day=now.getDay();
+  const diasDesde=day===0?-6:1-day;
+  const lu=new Date(now);
+  lu.setDate(now.getDate()+diasDesde+off*7);
+  lu.setHours(0,0,0,0);
   const sa=new Date(lu);sa.setDate(lu.getDate()+5);
-  return[lu.toISOString().split('T')[0],sa.toISOString().split('T')[0]];
+  return[fmt(lu),fmt(sa)];
 }
 
 function finWeekLabel(off){
@@ -1559,13 +1623,77 @@ function onProdSelChange(){
   montoInput.focus();
 }
 
+let balTab='sem';
+
+function setBalTab(tab){
+  balTab=tab;
+  const tabSem=document.getElementById('balTabSem');
+  const tabMes=document.getElementById('balTabMes');
+  if(tab==='sem'){
+    tabSem.style.borderBottomColor='var(--gold)';tabSem.style.color='var(--gold)';
+    tabMes.style.borderBottomColor='transparent';tabMes.style.color='var(--gray)';
+  } else {
+    tabMes.style.borderBottomColor='var(--gold)';tabMes.style.color='var(--gold)';
+    tabSem.style.borderBottomColor='transparent';tabSem.style.color='var(--gray)';
+  }
+  renderBalance();
+}
+
+async function renderBalance(){
+  const esSem=balTab==='sem';
+  const [ini,fin]=esSem?finGetWeekRange(finSemOff):getMesRange();
+
+  // Ingresos cortes
+  const ingCortes=clientes.reduce((total,c)=>{
+    const ps=(c.precios||[]).filter(p=>p.fecha>=ini&&p.fecha<=fin);
+    return total+ps.reduce((s,p)=>s+(p.precio||0),0);
+  },0);
+
+  // Productos
+  await cargarVentasCera();
+  const ingProd=(ventasCera||[]).filter(v=>v.fecha>=ini&&v.fecha<=fin).reduce((s,v)=>s+v.monto,0);
+
+  // Sueldos barberos (50% de cortes)
+  const sueldos=Math.round(ingCortes*0.5);
+
+  // Gastos
+  let gastos=0;
+  try{
+    const gData=await sbFetch('gastos?fecha=gte.'+ini+'&fecha=lte.'+fin+'&select=monto');
+    if(gData) gastos=gData.reduce((s,g)=>s+(parseFloat(g.monto)||0),0);
+  }catch(e){}
+
+  const totalIng=ingCortes+ingProd;
+  const totalEgr=sueldos+gastos;
+  const neta=totalIng-totalEgr;
+
+  const fmt=n=>'$'+Math.round(n).toLocaleString('es-AR');
+  document.getElementById('balCortes').textContent=fmt(ingCortes);
+  document.getElementById('balProductos').textContent=fmt(ingProd);
+  document.getElementById('balTotalIng').textContent=fmt(totalIng);
+  document.getElementById('balSueldos').textContent=fmt(sueldos);
+  document.getElementById('balGastos').textContent=fmt(gastos);
+  document.getElementById('balTotalEgr').textContent=fmt(totalEgr);
+  const netaEl=document.getElementById('balNeta');
+  netaEl.textContent=(neta<0?'-':'')+fmt(Math.abs(neta));
+  netaEl.style.color=neta>=0?'var(--green)':'var(--red)';
+}
+
+function getMesRange(){
+  const n=new Date();
+  const ini=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-01';
+  const last=new Date(n.getFullYear(),n.getMonth()+1,0);
+  const fin=`${last.getFullYear()}-${String(last.getMonth()+1).padStart(2,'0')}-${String(last.getDate()).padStart(2,'0')}`;
+  return[ini,fin];
+}
+
 function initFinanzas(){
   const hoy=new Date().toISOString().split('T')[0];
   const fi=document.getElementById('gFecha');
   if(fi&&!fi.value)fi.value=hoy;
   const fp=document.getElementById('prodFecha');
   if(fp&&!fp.value)fp.value=hoy;
-  cargarVentasCera().then(()=>renderFinanzas());
+  cargarVentasCera().then(()=>{renderFinanzas();renderBalance();});
 }
 
 // ══ MÓDULO PAGOS ══
