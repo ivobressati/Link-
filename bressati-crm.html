@@ -243,6 +243,10 @@ select option{background:#111}
           <div class="srv-opt-precio">$17.000</div>
           <div class="srv-opt-nombre">Corte + Barba</div>
         </div>
+        <div class="srv-opt" data-id="cc_llegada" data-turno="llegada" onclick="selServicio(this)">
+          <div class="srv-opt-precio">$27.000</div>
+          <div class="srv-opt-nombre">Corte + Cera</div>
+        </div>
       </div>
       <div class="srv-sector-title" style="margin-top:16px"><span class="srv-sector-badge badge-turno">🗓 CON TURNO — GONZA / BRUNO / MARCOS</span></div>
       <div class="srv-grid">
@@ -253,6 +257,10 @@ select option{background:#111}
         <div class="srv-opt" data-id="cb_turno_gb" data-turno="turno" onclick="selServicio(this)">
           <div class="srv-opt-precio">$22.000</div>
           <div class="srv-opt-nombre">Corte + Barba</div>
+        </div>
+        <div class="srv-opt" data-id="cc_turno_gb" data-turno="turno" onclick="selServicio(this)">
+          <div class="srv-opt-precio">$30.000</div>
+          <div class="srv-opt-nombre">Corte + Cera</div>
         </div>
       </div>
       <div class="srv-sector-title" style="margin-top:16px"><span class="srv-sector-badge badge-ivo">💎 CON TURNO — IVO</span></div>
@@ -274,6 +282,34 @@ select option{background:#111}
       </div>
       <div class="precio-box-num" id="precioFormNum">$0</div>
     </div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:8px">¿Trabajo especial?</div>
+      <div id="btnTrabajoEsp" onclick="toggleTrabajoEsp()" style="background:#0d0d0d;border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:var(--gray)">✨ AGREGAR TRABAJO ESPECIAL</div>
+        <div style="font-size:18px" id="iconTrabajoEsp">＋</div>
+      </div>
+      <div id="panelTrabajoEsp" style="display:none;margin-top:10px;background:#0d0d0d;border:1px solid var(--border);border-radius:10px;padding:14px">
+        <div class="form-group" style="margin-bottom:10px">
+          <label>Tipo de servicio</label>
+          <input type="text" id="fTrabEspNombre" placeholder="Ej: Mechas, Coloración, Tratamiento…">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <div class="form-group">
+            <label>Precio $</label>
+            <input type="number" id="fTrabEspPrecio" placeholder="0" min="0" step="1000">
+          </div>
+          <div class="form-group">
+            <label>Barbero</label>
+            <select id="fTrabEspBarbero">
+              <option value="">Sin asignar</option>
+              <option>Ivo</option><option>Gonza</option><option>Bruno</option><option>Marcos</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <input type="hidden" id="fTrabEspActivo" value="0">
+
     <div id="btnComisionExtra" onclick="toggleComisionExtra()" style="background:#0d0d0d;border:2px solid var(--border);border-radius:10px;padding:13px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .2s">
       <div>
         <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--gray)">COMISIÓN ESPECIAL</div>
@@ -307,6 +343,8 @@ select option{background:#111}
       <tr><td>Corte</td><td><span class="tag tag-llegada">Orden llegada</span></td><td>Todos</td><td class="precio">$14.000</td></tr>
       <tr><td>Corte + Barba</td><td><span class="tag tag-llegada">Orden llegada</span></td><td>Todos</td><td class="precio">$17.000</td></tr>
       <tr><td>Corte</td><td><span class="tag tag-turno">Con turno</span></td><td>Gonza / Bruno / Marcos</td><td class="precio">$17.000</td></tr>
+      <tr><td>Corte + Cera</td><td><span class="tag tag-llegada">Orden llegada</span></td><td>Todos</td><td class="precio">$27.000</td></tr>
+      <tr><td>Corte + Cera</td><td><span class="tag tag-turno">Con turno</span></td><td>Gonza / Bruno / Marcos</td><td class="precio">$30.000</td></tr>
       <tr><td>Corte + Barba</td><td><span class="tag tag-turno">Con turno</span></td><td>Gonza / Bruno / Marcos</td><td class="precio">$22.000</td></tr>
       <tr><td>Corte</td><td><span class="tag tag-ivo">Con turno</span></td><td>Ivo</td><td class="precio">$20.000</td></tr>
       <tr><td>Corte + Barba</td><td><span class="tag tag-ivo">Con turno</span></td><td>Ivo</td><td class="precio">$22.000</td></tr>
@@ -670,7 +708,9 @@ const PRECIOS = [
   {id:'medio_llegada',   nombre:'Corte Medio',     tipo:'Orden llegada', barbero:'todos', precio:12000},
   {id:'corte_llegada',   nombre:'Corte',           tipo:'Orden llegada', barbero:'todos', precio:14000},
   {id:'cb_llegada',      nombre:'Corte + Barba',   tipo:'Orden llegada', barbero:'todos', precio:17000},
+  {id:'cc_llegada',      nombre:'Corte + Cera',    tipo:'Orden llegada', barbero:'todos', precio:27000},
   {id:'corte_turno_gb',  nombre:'Corte',           tipo:'Con turno',     barbero:'Gonza/Bruno/Marcos', precio:17000},
+  {id:'cc_turno_gb',     nombre:'Corte + Cera',    tipo:'Con turno',     barbero:'Gonza/Bruno/Marcos', precio:30000},
   {id:'cb_turno_gb',     nombre:'Corte + Barba',   tipo:'Con turno',     barbero:'Gonza/Bruno/Marcos', precio:22000},
   {id:'corte_ivo',       nombre:'Corte',           tipo:'Con turno',     barbero:'Ivo', precio:20000},
   {id:'cb_ivo',          nombre:'Corte + Barba',   tipo:'Con turno',     barbero:'Ivo', precio:22000},
@@ -791,6 +831,26 @@ function selPago(tipo){
   }
 }
 
+function toggleTrabajoEsp(){
+  const panel=document.getElementById('panelTrabajoEsp');
+  const btn=document.getElementById('btnTrabajoEsp');
+  const icon=document.getElementById('iconTrabajoEsp');
+  const activo=document.getElementById('fTrabEspActivo');
+  if(panel.style.display==='none'){
+    panel.style.display='block';
+    btn.style.borderColor='var(--gold)';
+    btn.style.background='rgba(212,175,55,.06)';
+    icon.textContent='−';icon.style.color='var(--gold)';
+    activo.value='1';
+  } else {
+    panel.style.display='none';
+    btn.style.borderColor='var(--border)';
+    btn.style.background='#0d0d0d';
+    icon.textContent='＋';icon.style.color='var(--gray)';
+    activo.value='0';
+  }
+}
+
 function toggleComisionExtra(){
   const input=document.getElementById('fComision');
   const btn=document.getElementById('btnComisionExtra');
@@ -869,6 +929,14 @@ function selPagoModal(tipo){
 function selServicio(el){
   document.querySelectorAll('.srv-opt').forEach(e=>e.classList.remove('selected'));
   selPago('efectivo');
+  // Reset trabajo especial
+  const pan=document.getElementById('panelTrabajoEsp');if(pan)pan.style.display='none';
+  const btnTE=document.getElementById('btnTrabajoEsp');if(btnTE){btnTE.style.borderColor='var(--border)';btnTE.style.background='#0d0d0d';}
+  const iconTE=document.getElementById('iconTrabajoEsp');if(iconTE){iconTE.textContent='＋';iconTE.style.color='var(--gray)';}
+  const fAct=document.getElementById('fTrabEspActivo');if(fAct)fAct.value='0';
+  const fTEN=document.getElementById('fTrabEspNombre');if(fTEN)fTEN.value='';
+  const fTEP=document.getElementById('fTrabEspPrecio');if(fTEP)fTEP.value='';
+  const fTEB=document.getElementById('fTrabEspBarbero');if(fTEB)fTEB.value='';
   // Resetear comisión
   const fC=document.getElementById('fComision');if(fC)fC.value='50';
   const bCE=document.getElementById('btnComisionExtra');
@@ -919,7 +987,7 @@ function buildMsgPerdido(c){
   return m;
 }
 
-function agregarCliente(){
+async function agregarCliente(){
   const nombre=document.getElementById('fNombre').value.trim();
   const tel=document.getElementById('fTel').value.trim().replace(/\D/g,'');
   if(!nombre){alert('Ingresá el nombre.');return}
@@ -929,6 +997,19 @@ function agregarCliente(){
   const precio=getPrecio(servicio);
   const pago=document.getElementById('fPago').value||'efectivo';
   const comision=parseInt(document.getElementById('fComision').value)||50;
+  // Trabajo especial
+  const trabActivo=document.getElementById('fTrabEspActivo').value==='1';
+  const trabNombre=document.getElementById('fTrabEspNombre').value.trim();
+  const trabPrecio=parseFloat(document.getElementById('fTrabEspPrecio').value)||0;
+  const trabBarbero=document.getElementById('fTrabEspBarbero').value;
+  if(trabActivo&&trabNombre&&trabPrecio>0){
+    await sbFetch('ventas_productos',{method:'POST',body:JSON.stringify({
+      descripcion:'✨ '+trabNombre+(trabBarbero?' — '+trabBarbero:''),
+      monto:trabPrecio,
+      fecha:hoy,
+      barbero:trabBarbero
+    })});
+  }
   const nuevo={id,nombre,tel,
     email:document.getElementById('fEmail').value.trim(),
     insta:document.getElementById('fInsta').value.trim(),
