@@ -184,6 +184,11 @@ select option{background:#111}
     <div class="stat"><div class="stat-num" id="statSemana">0</div><div class="stat-lbl">Semana</div></div>
     <div class="stat"><div class="stat-num" id="statDiamante">0</div><div class="stat-lbl">Diamantes</div></div>
   </div>
+  <div class="sec-title">Verificar Cliente</div>
+  <div style="position:relative;margin-bottom:16px">
+    <input type="text" id="quickSearch" placeholder="🔍 Buscá por nombre o teléfono antes de agendar…" oninput="quickSearchCliente()" autocomplete="off" style="width:100%;padding:13px 16px;font-size:13px;border-radius:10px;border:1px solid var(--border);background:#0d0d0d;color:var(--white);font-family:'Montserrat',sans-serif;outline:none">
+    <div id="quickSearchResults" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid var(--gold);border-radius:10px;z-index:50;max-height:240px;overflow-y:auto;margin-top:4px;box-shadow:0 8px 24px rgba(0,0,0,.6)"></div>
+  </div>
   <div class="sec-title">Agregar Cliente</div>
   <div class="form-card">
     <div class="form-grid">
@@ -814,6 +819,42 @@ function vxSem(c,off=0){
   return(c.visitas||[]).filter(v=>v>=i&&v<=f).length;
 }
 
+function quickSearchCliente(){
+  const q=document.getElementById('quickSearch').value.toLowerCase().trim();
+  const res=document.getElementById('quickSearchResults');
+  if(!q){res.style.display='none';return;}
+  const found=clientes.filter(c=>c.nombre.toLowerCase().includes(q)||c.tel.includes(q)).slice(0,5);
+  if(!found.length){
+    res.style.display='block';
+    res.innerHTML='<div style="padding:14px 16px;font-size:12px;color:var(--gray)">No encontrado — agendalo como cliente nuevo 👇</div>';
+    return;
+  }
+  res.style.display='block';
+  const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  res.innerHTML=found.map(c=>{
+    const r=getRango(c.cortes);
+    const dias=diasDesde(c);
+    const diasTxt=dias===0?'🟢 Vino hoy':dias===null?'':dias>15?`⚠ ${dias}d sin venir`:`${dias}d`;
+    return`<div onclick="seleccionarClienteRapido(${c.id})" style="padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.04)'" onmouseout="this.style.background=''">
+      <div class="client-avatar ${r.cls}" style="width:34px;height:34px;font-size:12px;flex-shrink:0">${c.nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--white)">${c.nombre}</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:2px">${c.tel}${c.barbero?' · ✂️ '+c.barbero:''} · ${r.emoji} ${r.nombre}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold)">${c.cortes}</div>
+        <div style="font-size:9px;color:var(--gray)">${diasTxt}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function seleccionarClienteRapido(id){
+  document.getElementById('quickSearch').value='';
+  document.getElementById('quickSearchResults').style.display='none';
+  sumarCorte(id);
+}
+
 function selPago(tipo){
   document.getElementById('fPago').value=tipo;
   const btnE=document.getElementById('btnEfectivo');
@@ -975,6 +1016,15 @@ function buildMsgCorte(c){
   return m;
 }
 
+async function marcarContactado(id){
+  const c=clientes.find(x=>x.id===id);if(!c)return;
+  c.contactado=new Date().toISOString();
+  save();
+  await guardarEnNube(c);
+  renderPerdidos();
+  closeModal();
+}
+
 function buildMsgPerdido(c){
   const r=getRango(c.cortes),n=c.nombre.split(' ')[0],dias=diasDesde(c);
   let m=`✂️ Hola ${n}, ¿cómo andás?\n\nHace *${dias} días* que no te vemos en *Barber Studio Bressati* y te echamos de menos 💈\n\n`;
@@ -1052,11 +1102,20 @@ function confirmarCorte(id,servId){
   mostrarSync('☁️ Guardando...');
   guardarEnNube(c).then(()=>ocultarSync()).catch(e=>console.error(e));
   renderAll();
+  // Mostrar mensaje y botón WhatsApp en el modal sin cerrar
   const msg=buildMsgCorte(c);
   const tel=c.tel.startsWith('54')?c.tel:'549'+c.tel;
   const url='https://wa.me/'+tel+'?text='+encodeURIComponent(msg).replace(/%20/g,'+');
-  window.open(url,'_blank');
-  closeModal();
+  document.getElementById('modalPrecioSelector').style.display='none';
+  document.getElementById('modalTitle').textContent='✅ CORTE REGISTRADO';
+  document.getElementById('modalNombre').textContent=c.nombre+' — '+c.cortes+' cortes totales';
+  document.getElementById('modalMsg').textContent=msg;
+  const wspBtn=document.getElementById('modalWspBtn');
+  wspBtn.href=url;wspBtn.style.display='flex';
+  wspBtn.innerHTML='<svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> &nbsp;ENVIAR MENSAJE';
+  document.getElementById('modalHistSection').style.display='none';
+  document.getElementById('modalDelBtn').style.display='none';
+  document.getElementById('modalEditBtn').style.display='none';
 }
 
 function abrirModal(id,perdido,mostrarSelector){
@@ -1068,12 +1127,29 @@ function abrirModal(id,perdido,mostrarSelector){
   document.getElementById('modalMsg').textContent=msg;
   document.getElementById('modalWspBtn').href='https://wa.me/'+tel+'?text='+encodeURIComponent(msg).replace(/%20/g,'+');
   document.getElementById('modalDelBtn').onclick=()=>eliminarCliente(id);
+  // Botón contactado (solo para perdidos)
+  let btnCont=document.getElementById('modalContBtn');
+  if(!btnCont){
+    btnCont=document.createElement('button');
+    btnCont.id='modalContBtn';
+    btnCont.className='btn-del';
+    btnCont.style.cssText='border-color:rgba(39,174,96,.4);color:var(--green);margin-top:6px';
+    document.getElementById('modalDelBtn').insertAdjacentElement('beforebegin',btnCont);
+  }
+  if(perdido){
+    btnCont.style.display='block';
+    btnCont.textContent='✅ Marcar como contactado (ocultar 7 días)';
+    btnCont.onclick=()=>marcarContactado(id);
+  } else {
+    btnCont.style.display='none';
+  }
   document.getElementById('modalEditBtn')._clientId=id;
   const sel=document.getElementById('modalPrecioSelector');
   document.getElementById('modalWspBtn').style.display=mostrarSelector?'none':'flex';
   document.getElementById('modalHistSection').style.display=mostrarSelector?'none':'block';
   document.getElementById('modalDelBtn').style.display=mostrarSelector?'none':'block';
   document.getElementById('modalEditBtn').style.display=mostrarSelector?'none':'block';
+  const btnC=document.getElementById('modalContBtn');if(btnC)btnC.style.display='none';
   if(mostrarSelector){
     sel.style.display='block';
     // Resetear toggle 80%
@@ -1431,7 +1507,17 @@ function renderBarberos(){
 }
 
 function renderPerdidos(){
-  const lista=clientes.filter(c=>(diasDesde(c)||0)>15).sort((a,b)=>(diasDesde(b)||0)-(diasDesde(a)||0));
+  const ahora=Date.now();
+  const lista=clientes.filter(c=>{
+    const dias=diasDesde(c)||0;
+    if(dias<=15) return false; // ya vino recientemente
+    // Si fue contactado hace menos de 7 días, ocultar
+    if(c.contactado){
+      const diasContactado=Math.floor((ahora-new Date(c.contactado))/(864e5));
+      if(diasContactado<7) return false;
+    }
+    return true;
+  }).sort((a,b)=>(diasDesde(b)||0)-(diasDesde(a)||0));
   document.getElementById('perdidosCount').textContent=lista.length;
   // Mostrar preview del mensaje con el primer cliente de la lista
   const prev=document.getElementById('previewMsgPerdido');
@@ -1612,11 +1698,26 @@ async function renderListaGastos(){
     cont.innerHTML=items.map(g=>{
       const d=new Date(g.fecha+'T00:00:00');
       const esIngreso=g._tipo==='ingreso';
-      return`<div class="fin-gasto-item" style="${esIngreso?'border-color:rgba(39,174,96,.25);background:rgba(39,174,96,.04)':''}">
-        <div class="fin-gi-desc">${g.descripcion}</div>
-        <div class="fin-gi-fecha">${d.getDate()} ${ms[d.getMonth()]} ${d.getFullYear()}</div>
-        <div class="fin-gi-monto" style="${esIngreso?'color:var(--green)':''}">${esIngreso?'+':'−'}$${Math.round(g.monto).toLocaleString('es-AR')}</div>
-        <button class="fin-gi-del" onclick="${esIngreso?`eliminarVenta('${g.id}')`:`eliminarGasto('${g.id}')`}" title="Eliminar">✕</button>
+      const esTrabEsp=esIngreso&&g.descripcion&&g.descripcion.startsWith('✨');
+      let borde=esTrabEsp?'border-color:rgba(126,200,227,.35);background:rgba(126,200,227,.04)':esIngreso?'border-color:rgba(39,174,96,.25);background:rgba(39,174,96,.04)':'';
+      let badge=esTrabEsp
+        ?'<span style="background:rgba(126,200,227,.15);color:var(--diamante);border-radius:4px;padding:1px 6px;font-size:9px;font-weight:700">✨ TRAB. ESP.</span>'
+        :esIngreso
+          ?'<span style="background:rgba(39,174,96,.12);color:var(--green);border-radius:4px;padding:1px 6px;font-size:9px;font-weight:700">PRODUCTO</span>'
+          :'<span style="background:rgba(255,255,255,.06);color:var(--gray);border-radius:4px;padding:1px 6px;font-size:9px;font-weight:700">GASTO</span>';
+      const colorMonto=esTrabEsp?'color:var(--diamante)':esIngreso?'color:var(--green)':'';
+      return`<div class="fin-gasto-item" style="${borde};flex-wrap:wrap;gap:4px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px">${g.descripcion}</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            ${badge}
+            <span class="fin-gi-fecha">${d.getDate()} ${ms[d.getMonth()]} ${d.getFullYear()}</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <div class="fin-gi-monto" style="${colorMonto}">${esIngreso?'+':'−'}$${Math.round(g.monto).toLocaleString('es-AR')}</div>
+          <button class="fin-gi-del" onclick="${esIngreso?`eliminarVenta('${g.id}')`:`eliminarGasto('${g.id}')`}" title="Eliminar">✕</button>
+        </div>
       </div>`;
     }).join('');
   }catch{
@@ -1929,3 +2030,4 @@ async function renderPagos(){
 </script>
 </body>
 </html>
+
