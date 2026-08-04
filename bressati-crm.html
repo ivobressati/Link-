@@ -173,6 +173,7 @@ select option{background:#111}
   <button class="nav-tab" onclick="showPage('perdidos',this)" id="tabPerdidos">Perdidos</button>
   <button class="nav-tab" onclick="showPage('finanzas',this)">💰 Finanzas</button>
   <button class="nav-tab" onclick="showPage('pagos',this)">💵 Pagos</button>
+  <button class="nav-tab" onclick="showPage('rendimiento',this)">📊 Rendimiento</button>
 </div>
 
 <!-- ══ CLIENTES ══ -->
@@ -1295,6 +1296,7 @@ function showPage(p,btn){
   if(p==='precios')renderPrecios();
   if(p==='finanzas')initFinanzas();
   if(p==='pagos')renderPagos();
+  if(p==='rendimiento'){initRendimiento();}
 }
 
 function setFiltro(f){
@@ -2027,7 +2029,295 @@ async function renderPagos(){
   `).join('');
 }
 
+
+// ══ RENDIMIENTO ══
+const CRITERIOS = [
+  'Limpieza general',
+  'Orden del puesto',
+  'Atención al cliente sentado',
+  'Atención al cliente en espera',
+  'Rapidez y viveza',
+  'Puntualidad',
+  'Calidad del servicio',
+  'Charla del servicio',
+  'Compañerismo',
+  'Presentación personal',
+  'Uso del celular',
+  'Manejo de tiempos',
+  'Proactividad',
+  'Conocimiento técnico'
+];
+
+let evaluaciones = JSON.parse(localStorage.getItem('evaluaciones_bressati')||'[]');
+let rendFiltroActual = '';
+
+function initRendimiento(){
+  // Setear fecha de hoy
+  const hoyInput = document.getElementById('rendFecha');
+  if(hoyInput && !hoyInput.value) hoyInput.value = hoyStr();
+
+  // Renderizar criterios
+  const cont = document.getElementById('rendCriterios');
+  cont.innerHTML = CRITERIOS.map((c,i) => `
+    <div style="background:#0d0d0d;border:1px solid var(--border);border-radius:10px;padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:12px;color:var(--white);font-weight:600">${c}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold)" id="rendVal_${i}">5</div>
+      </div>
+      <input type="range" min="1" max="10" value="5" style="width:100%;accent-color:var(--gold)"
+        oninput="actualizarCriterio(${i},this.value)" id="rendSlider_${i}">
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--gray);margin-top:2px">
+        <span>1</span><span>10</span>
+      </div>
+    </div>
+  `).join('');
+
+  actualizarTotal();
+  renderHistorialEvaluaciones();
+  renderRankingRendimiento();
+}
+
+function actualizarCriterio(i, val){
+  document.getElementById('rendVal_'+i).textContent = val;
+  actualizarTotal();
+}
+
+function actualizarTotal(){
+  let suma = 0;
+  CRITERIOS.forEach((_,i) => {
+    const s = document.getElementById('rendSlider_'+i);
+    if(s) suma += parseInt(s.value);
+  });
+  const pct = Math.round((suma / (CRITERIOS.length * 10)) * 100);
+  const el = document.getElementById('rendTotal');
+  const elPts = document.getElementById('rendPuntos');
+  if(el){
+    el.textContent = pct + '%';
+    el.style.color = pct >= 80 ? 'var(--green)' : pct >= 60 ? 'var(--gold)' : 'var(--red)';
+  }
+  if(elPts) elPts.textContent = suma + ' / ' + (CRITERIOS.length * 10) + ' puntos';
+}
+
+async function guardarEvaluacion(){
+  const barbero = document.getElementById('rendBarbero').value;
+  const fecha = document.getElementById('rendFecha').value;
+  if(!barbero){alert('Seleccioná un barbero');return;}
+  if(!fecha){alert('Seleccioná una fecha');return;}
+
+  const scores = CRITERIOS.map((_,i) => parseInt(document.getElementById('rendSlider_'+i).value));
+  const total = scores.reduce((a,b)=>a+b,0);
+  const pct = Math.round((total/(CRITERIOS.length*10))*100);
+
+  const ev = {id:Date.now(), barbero, fecha, scores, total, pct};
+  evaluaciones.unshift(ev);
+  localStorage.setItem('evaluaciones_bressati', JSON.stringify(evaluaciones));
+
+  // Reset sliders
+  CRITERIOS.forEach((_,i) => {
+    const s = document.getElementById('rendSlider_'+i);
+    if(s){s.value=5;document.getElementById('rendVal_'+i).textContent='5';}
+  });
+  document.getElementById('rendBarbero').value='';
+  actualizarTotal();
+  renderHistorialEvaluaciones();
+  mostrarSync('✅ Evaluación guardada');
+  setTimeout(ocultarSync, 2000);
+}
+
+function filtrarRendimiento(barbero){
+  rendFiltroActual = barbero;
+  // Actualizar botones
+  document.querySelectorAll('#rendFiltrosBarbero button').forEach(b => {
+    b.style.background = 'var(--card)';
+    b.style.color = 'var(--gray)';
+    b.style.border = '1px solid var(--border)';
+  });
+  const btns = document.querySelectorAll('#rendFiltrosBarbero button');
+  const idx = ['','Ivo','Gonza','Bruno','Marcos'].indexOf(barbero);
+  if(btns[idx]){
+    btns[idx].style.background = 'var(--gold)';
+    btns[idx].style.color = '#000';
+    btns[idx].style.border = 'none';
+  }
+  renderHistorialEvaluaciones();
+}
+
+function renderHistorialEvaluaciones(){
+  const lista = rendFiltroActual
+    ? evaluaciones.filter(e=>e.barbero===rendFiltroActual)
+    : evaluaciones;
+
+  const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const cont = document.getElementById('rendHistorial');
+  if(!lista.length){
+    cont.innerHTML='<div style="text-align:center;color:var(--gray);padding:20px;font-size:12px">Sin evaluaciones aún</div>';
+    return;
+  }
+
+  cont.innerHTML = lista.map(ev => {
+    const d = new Date(ev.fecha+'T12:00:00');
+    const color = ev.pct >= 80 ? 'var(--green)' : ev.pct >= 60 ? 'var(--gold)' : 'var(--red)';
+    const label = ev.pct >= 80 ? '🟢 Excelente' : ev.pct >= 60 ? '🟡 Regular' : '🔴 Necesita mejorar';
+    return `<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+      <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--white)">${ev.barbero}</div>
+          <div style="font-size:11px;color:var(--gray);margin-top:2px">${d.getDate()} ${ms[d.getMonth()]} ${d.getFullYear()}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:40px;color:${color};line-height:1">${ev.pct}%</div>
+          <div style="font-size:10px;color:${color}">${label}</div>
+        </div>
+      </div>
+      <div style="padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        ${CRITERIOS.map((c,i) => `
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:10px;color:var(--gray)">${c}</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:${ev.scores[i]>=8?'var(--green)':ev.scores[i]>=5?'var(--gold)':'var(--red)'}">${ev.scores[i]}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div style="padding:10px 16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:11px;color:var(--gray)">${ev.total} / ${CRITERIOS.length*10} puntos</div>
+        <button onclick="eliminarEvaluacion(${ev.id})" style="background:none;border:none;color:var(--gray);cursor:pointer;font-size:13px">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+let rendPeriodo = 'semana';
+
+function setRendPeriodo(p){
+  rendPeriodo = p;
+  const ids = ['rendPSem','rendPMes','rendPMesP','rendPTodo'];
+  const vals = ['semana','mes','mesPasado','todo'];
+  ids.forEach((id,i) => {
+    const btn = document.getElementById(id);
+    if(!btn) return;
+    if(vals[i]===p){
+      btn.style.background='var(--gold)';btn.style.color='#000';btn.style.border='none';
+    } else {
+      btn.style.background='var(--card)';btn.style.color='var(--gray)';btn.style.border='1px solid var(--border)';
+    }
+  });
+  renderRankingRendimiento();
+}
+
+function renderRankingRendimiento(){
+  const ahora = new Date();
+  const mes = ahora.getMonth();
+  const anio = ahora.getFullYear();
+  const mesPasado = mes === 0 ? 11 : mes - 1;
+  const anioMesP = mes === 0 ? anio - 1 : anio;
+
+  const [semIni, semFin] = getWeekRange(0);
+
+  const evsFiltradas = evaluaciones.filter(ev => {
+    const d = new Date(ev.fecha + 'T12:00:00');
+    if(rendPeriodo === 'semana') return ev.fecha >= semIni && ev.fecha <= semFin;
+    if(rendPeriodo === 'mes') return d.getMonth()===mes && d.getFullYear()===anio;
+    if(rendPeriodo === 'mesPasado') return d.getMonth()===mesPasado && d.getFullYear()===anioMesP;
+    return true; // todo
+  });
+
+  const barberos = ['Ivo','Gonza','Bruno','Marcos'];
+  const ranking = barberos.map(b => {
+    const evs = evsFiltradas.filter(e => e.barbero === b);
+    if(!evs.length) return {barbero:b, promedio:0, cantidad:0};
+    const prom = Math.round(evs.reduce((s,e)=>s+e.pct,0)/evs.length);
+    return {barbero:b, promedio:prom, cantidad:evs.length};
+  }).filter(r => r.cantidad > 0).sort((a,b) => b.promedio - a.promedio);
+
+  const medallas = ['🥇','🥈','🥉','4️⃣'];
+  const cont = document.getElementById('rendRanking');
+
+  if(!ranking.length){
+    cont.innerHTML='<div style="text-align:center;color:var(--gray);padding:16px;font-size:12px">Sin evaluaciones en este período</div>';
+    return;
+  }
+
+  cont.innerHTML = ranking.map((r,i) => {
+    const color = r.promedio>=80?'var(--green)':r.promedio>=60?'var(--gold)':'var(--red)';
+    const barW = r.promedio + '%';
+    return `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:20px">${medallas[i]||'  '}</span>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--white)">${r.barbero}</div>
+          <div style="font-size:10px;color:var(--gray)">${r.cantidad} eval.</div>
+        </div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:${color}">${r.promedio}%</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border-radius:20px;height:8px;overflow:hidden">
+        <div style="background:${color};width:${barW};height:100%;border-radius:20px;transition:width .4s"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function eliminarEvaluacion(id){
+  if(!confirm('¿Eliminar esta evaluación?'))return;
+  evaluaciones = evaluaciones.filter(e=>e.id!==id);
+  localStorage.setItem('evaluaciones_bressati', JSON.stringify(evaluaciones));
+  renderHistorialEvaluaciones();
+}
+
 </script>
+<!-- ══ RENDIMIENTO ══ -->
+<div class="page" id="pageRendimiento">
+  <div class="sec-title">📊 Evaluación de Rendimiento</div>
+
+  <!-- Selector barbero y fecha -->
+  <div class="form-card" style="margin-bottom:16px;padding:16px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div class="form-group">
+        <label style="font-size:10px;letter-spacing:2px;color:var(--gold);font-weight:700">BARBERO</label>
+        <select id="rendBarbero">
+          <option value="">Seleccionar</option>
+          <option>Ivo</option><option>Gonza</option><option>Bruno</option><option>Marcos</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label style="font-size:10px;letter-spacing:2px;color:var(--gold);font-weight:700">FECHA</label>
+        <input type="date" id="rendFecha">
+      </div>
+    </div>
+
+    <!-- Criterios -->
+    <div id="rendCriterios" style="display:flex;flex-direction:column;gap:8px">
+    </div>
+
+    <!-- Total -->
+    <div style="background:#0d0d0d;border-radius:10px;padding:14px;margin-top:14px;text-align:center">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:4px">Puntaje total</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;line-height:1" id="rendTotal">0%</div>
+      <div style="font-size:11px;color:var(--gray);margin-top:4px" id="rendPuntos">0 / 140 puntos</div>
+    </div>
+
+    <button class="btn-add" onclick="guardarEvaluacion()" style="margin-top:14px">✦ GUARDAR EVALUACIÓN</button>
+  </div>
+
+  <!-- Ranking resumen -->
+  <div class="sec-title">Ranking por período</div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <button onclick="setRendPeriodo('semana')" id="rendPSem" style="background:var(--gold);color:#000;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer">Esta semana</button>
+    <button onclick="setRendPeriodo('mes')" id="rendPMes" style="background:var(--card);color:var(--gray);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer">Este mes</button>
+    <button onclick="setRendPeriodo('mesPasado')" id="rendPMesP" style="background:var(--card);color:var(--gray);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer">Mes pasado</button>
+    <button onclick="setRendPeriodo('todo')" id="rendPTodo" style="background:var(--card);color:var(--gray);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer">Histórico</button>
+  </div>
+  <div id="rendRanking" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px"></div>
+
+  <!-- Historial de evaluaciones -->
+  <div class="sec-title">Historial</div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap" id="rendFiltrosBarbero">
+    <button onclick="filtrarRendimiento('')" id="rendFiltroTodos" style="background:var(--gold);color:#000;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer">Todos</button>
+    <button onclick="filtrarRendimiento('Ivo')" style="background:var(--card);color:var(--gray);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer">Ivo</button>
+    <button onclick="filtrarRendimiento('Gonza')" style="background:var(--card);color:var(--gray);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer">Gonza</button>
+    <button onclick="filtrarRendimiento('Bruno')" style="background:var(--card);color:var(--gray);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer">Bruno</button>
+    <button onclick="filtrarRendimiento('Marcos')" style="background:var(--card);color:var(--gray);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer">Marcos</button>
+  </div>
+  <div id="rendHistorial" style="display:flex;flex-direction:column;gap:10px"></div>
+</div>
+
 </body>
 </html>
-
