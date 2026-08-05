@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academia Bressati — Formación online para barberos</title>
+<meta name="description" content="La academia online de Barber Studio Bressati. Técnica, sistema y marca personal para barberos que quieren construir un estudio de verdad.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --bg-soft:#f6f6f5;
+    --ink:#0a0a0a;
+    --ink-soft:#6c6c6c;
+    --ink-faint:#9a9a9a;
+    --line:#e6e6e4;
+    --line-strong:#0a0a0a;
+    --radius:2px;
+    --maxw:1180px;
+    --display: 'Bricolage Grotesque', sans-serif;
+    --body: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    /* dorado metálico — usar solo como acento fino, nunca como relleno */
+    --gold-1:#8a7233;
+    --gold-2:#cba85e;
+    --gold-3:#e8d3a0;
+    --gold-line: linear-gradient(90deg, transparent, var(--gold-2), transparent);
+    --gold-text: linear-gradient(100deg, #8a7233 0%, #d8b568 45%, #f1e2b8 60%, #b8934a 100%);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--body);
+    -webkit-font-smoothing:antialiased; line-height:1.5;
+    overflow-x:hidden;
+  }
+  img{max-width:100%; display:block;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
+  .eyebrow{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-soft); display:flex; align-items:center; gap:10px; margin-bottom:18px;
+  }
+  .eyebrow::before{content:''; width:22px; height:1px; background:linear-gradient(90deg, var(--ink), var(--gold-2)); display:inline-block;}
+  h1,h2,h3{font-family:var(--display); font-weight:700; letter-spacing:-.02em; line-height:1.05;}
+  .gold-text{
+    background:var(--gold-text); background-size:200% auto; -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent; color:var(--gold-2); animation:goldShift 7s ease-in-out infinite;
+  }
+  @keyframes goldShift{0%,100%{background-position:0% 50%;} 50%{background-position:100% 50%;}}
+  .gold-rule{height:1px; background:var(--gold-line); border:none; margin:0;}
+  .btn{
+    position:relative; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    font-family:var(--body); font-weight:600; font-size:14.5px; letter-spacing:-.01em;
+    padding:14px 26px; border-radius:var(--radius); cursor:pointer; border:1px solid var(--ink);
+    transition:all .3s cubic-bezier(.2,.8,.2,1); white-space:nowrap; overflow:hidden;
+  }
+  .btn-solid{background:var(--ink); color:#fff;}
+  .btn-solid::after{
+    content:''; position:absolute; inset:0; background:linear-gradient(120deg, transparent 30%, rgba(203,168,94,.55) 50%, transparent 70%);
+    transform:translateX(-120%); transition:transform .6s ease;
+  }
+  .btn-solid:hover::after{transform:translateX(120%);}
+  .btn-solid:hover{background:#000; transform:translateY(-1px); box-shadow:0 10px 28px -6px rgba(203,168,94,.35), 0 6px 16px rgba(0,0,0,.2); border-color:var(--gold-2);}
+  .btn-ghost{background:transparent; color:var(--ink);}
+  .btn-ghost:hover{background:var(--ink); color:#fff; border-color:var(--gold-2); box-shadow:0 8px 22px -6px rgba(203,168,94,.3);}
+  section{position:relative;}
+  .fade{opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s ease;}
+  .fade.in{opacity:1; transform:translateY(0);}
+
+  /* NAV */
+  header{
+    position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{display:flex; align-items:center; justify-content:space-between; padding:18px 28px; max-width:var(--maxw); margin:0 auto;}
+  .logo{font-family:var(--mono); font-size:13px; letter-spacing:.14em; text-transform:uppercase; font-weight:500;}
+  .logo b{font-weight:700;}
+  .nav-links{display:flex; gap:34px; font-size:14px; color:var(--ink-soft);}
+  .nav-links a:hover{color:var(--ink);}
+  .nav-cta{display:flex; align-items:center; gap:14px;}
+  .nav-login{font-size:14px; color:var(--ink-soft); font-weight:500;}
+  .nav-login:hover{color:var(--ink);}
+  .burger{display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none;}
+  .burger span{width:22px; height:1.5px; background:var(--ink); display:block;}
+
+  /* HERO */
+  .hero{padding:96px 0 80px; overflow:hidden; background:
+    radial-gradient(ellipse 900px 500px at 80% -10%, #f2f2f0, transparent);
+  }
+  .hero-glow{position:absolute; top:-160px; right:-160px; width:520px; height:520px; border-radius:50%;
+    background:radial-gradient(circle, rgba(203,168,94,.16), transparent 70%); pointer-events:none; z-index:0;
+    animation:glowPulse 6s ease-in-out infinite;}
+  @keyframes glowPulse{0%,100%{opacity:.7; transform:scale(1);} 50%{opacity:1; transform:scale(1.08);}}
+  .hero-grid{position:relative; z-index:1; display:grid; grid-template-columns:1.05fr .95fr; gap:60px; align-items:center;}
+  .hero h1{font-size:clamp(38px,5.4vw,64px);}
+  .hero h1 em{font-style:normal; color:var(--ink-faint);}
+  .hero p.lead{font-size:17.5px; color:var(--ink-soft); max-width:460px; margin:22px 0 34px; line-height:1.6;}
+  .hero-actions{display:flex; gap:14px; flex-wrap:wrap;}
+  .hero-stats{display:flex; gap:34px; margin-top:46px; padding-top:28px; position:relative;}
+  .hero-stats::before{content:''; position:absolute; top:0; left:0; width:100%; height:1px; background:var(--gold-line);}
+  .hero-stat b{font-family:var(--display); font-size:26px; display:block; font-weight:700;}
+  .hero-stat span{font-family:var(--mono); font-size:11px; color:var(--ink-soft); letter-spacing:.05em;}
+  .hero-media{position:relative; border-radius:var(--radius); overflow:hidden; background:#111; aspect-ratio:4/5;
+    box-shadow:0 30px 70px -20px rgba(0,0,0,.4), 0 0 0 1px rgba(203,168,94,.25);}
+  .hero-media::after{content:''; position:absolute; inset:0; background:linear-gradient(180deg, transparent 40%, rgba(0,0,0,.55)); pointer-events:none;}
+  .hero-media video, .hero-media img{width:100%; height:100%; object-fit:cover; opacity:.85;}
+  .play-btn{
+    position:absolute; inset:0; margin:auto; width:74px; height:74px; border-radius:50%;
+    background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2;
+    transition:transform .25s ease; box-shadow:0 0 0 0 rgba(203,168,94,.5); animation:playPulse 2.6s ease-out infinite;
+  }
+  @keyframes playPulse{0%{box-shadow:0 0 0 0 rgba(203,168,94,.45);} 70%{box-shadow:0 0 0 16px rgba(203,168,94,0);} 100%{box-shadow:0 0 0 0 rgba(203,168,94,0);}}
+  .play-btn:hover{transform:scale(1.07);}
+  .play-btn svg{width:22px; height:22px; margin-left:3px;}
+  .hero-tag{position:absolute; bottom:18px; left:18px; color:#fff; font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; opacity:.9; z-index:2;}
+
+  /* SECTION HEADERS */
+  .sec-head{max-width:640px; margin-bottom:56px;}
+  .sec-head h2{font-size:clamp(28px,3.6vw,42px);}
+  .sec-head p{color:var(--ink-soft); font-size:16px; margin-top:14px; line-height:1.6;}
+  .band{background:var(--bg-soft); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+
+  /* CLASE GRATUITA */
+  .free-class{padding:100px 0;}
+  .free-grid{display:grid; grid-template-columns:.85fr 1.15fr; gap:60px; align-items:center;}
+  .free-media{position:relative; border-radius:var(--radius); overflow:hidden; background:#0a0a0a; aspect-ratio:16/9;}
+  .free-media video{width:100%; height:100%; object-fit:cover;}
+  .free-overlay{
+    position:absolute; inset:0; background:rgba(10,10,10,.92); color:#fff; display:none;
+    flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px; gap:16px;
+  }
+  .free-overlay.show{display:flex;}
+  .free-overlay h3{color:#fff; font-size:22px;}
+  .free-overlay p{color:#c9c9c9; font-size:14px; max-width:340px;}
+  .free-list{list-style:none; margin-top:24px;}
+  .free-list li{display:flex; gap:12px; padding:10px 0; border-top:1px solid var(--line); font-size:14.5px; color:var(--ink-soft);}
+  .free-list li:first-child{border-top:none;}
+  .free-list li::before{content:'—'; color:var(--ink);}
+
+  /* BENEFICIOS */
+  .benefits{padding:100px 0;}
+  .benefit-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line);}
+  .benefit-card{background:#fff; padding:38px 32px; transition:background .25s ease;}
+  .benefit-card:hover{background:var(--bg-soft);}
+  .benefit-num{font-family:var(--mono); font-size:12px; color:var(--ink-faint); letter-spacing:.05em;}
+  .benefit-card h3{font-size:19px; margin:16px 0 10px; font-weight:600;}
+  .benefit-card p{font-size:14.5px; color:var(--ink-soft); line-height:1.6;}
+
+  /* RESULTADOS */
+  .results{padding:90px 0;}
+  .results-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:0; position:relative; padding-top:1px;}
+  .results-grid::before{content:''; position:absolute; top:0; left:0; width:100%; height:1px; background:var(--gold-line);}
+  .result-stat{padding:34px 24px 0; border-left:1px solid var(--line); position:relative;}
+  .result-stat:first-child{border-left:none;}
+  .result-stat b{font-family:var(--display); font-size:clamp(34px,4vw,52px); font-weight:700; display:block; background:linear-gradient(180deg, var(--ink) 60%, var(--gold-1) 190%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  .result-stat span{font-size:13.5px; color:var(--ink-soft); display:block; margin-top:6px;}
+  .result-stat::after{content:''; position:absolute; bottom:-1px; left:0; width:28px; height:2px; background:var(--gold-2); opacity:0; transition:opacity .4s ease, width .4s ease;}
+  .result-stat.in::after{opacity:1; width:44px;}
+
+  /* ANTES Y DESPUES */
+  .ba{padding:100px 0;}
+  .ba-slider{position:relative; aspect-ratio:16/9; max-width:820px; margin:0 auto; border-radius:var(--radius); overflow:hidden; cursor:ew-resize; user-select:none;}
+  .ba-slider .after, .ba-slider .before{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
+  .ba-slider .before-wrap{position:absolute; inset:0; overflow:hidden; width:50%;}
+  .ba-slider .before-wrap img{width:200%; max-width:none; height:100%; position:absolute; left:0; top:0;}
+  .ba-handle{position:absolute; top:0; bottom:0; left:50%; width:2px; background:#fff; transform:translateX(-1px);}
+  .ba-handle::after{
+    content:'⟷'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:42px; height:42px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:15px; box-shadow:0 4px 14px rgba(0,0,0,.25);
+  }
+  .ba-label{position:absolute; top:14px; font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#fff; background:rgba(0,0,0,.55); padding:5px 10px;}
+  .ba-label.l{left:14px;} .ba-label.r{right:14px;}
+  .ba-note{text-align:center; font-size:13px; color:var(--ink-faint); margin-top:16px; font-family:var(--mono);}
+
+  /* CERTIFICADO */
+  .cert-sec{padding:100px 0;}
+  .cert-mock{max-width:720px; margin:0 auto;}
+  .cert-mock-inner{
+    background:#0a0a0a; color:#fff; border-radius:4px; padding:44px 40px; position:relative;
+    box-shadow:0 30px 70px -20px rgba(0,0,0,.35), 0 0 0 1px rgba(203,168,94,.4);
+  }
+  .cert-mock-inner::before{
+    content:''; position:absolute; inset:10px; border:1px solid rgba(203,168,94,.45); pointer-events:none;
+  }
+  .cert-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:34px;}
+  .cert-brand{font-family:var(--mono); font-size:11.5px; letter-spacing:.14em; color:var(--gold-3);}
+  .cert-seal{width:38px; height:38px; border-radius:50%; border:1px solid var(--gold-2); display:flex; align-items:center; justify-content:center; color:var(--gold-2); font-size:16px;}
+  .cert-mid{text-align:center; padding:10px 0 30px;}
+  .cert-eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.12em; color:#9a9a9a;}
+  .cert-name{font-family:var(--display); font-size:clamp(26px,4vw,36px); margin:14px 0 10px; background:var(--gold-text); background-size:200% auto; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  .cert-course{font-size:14px; color:#c9c9c9;}
+  .cert-course b{color:#fff;}
+  .cert-bottom{display:flex; justify-content:space-between; align-items:flex-end; padding-top:26px; border-top:1px solid rgba(255,255,255,.12);}
+  .cert-sign-line{display:block; font-family:var(--display); font-size:19px; font-style:italic; border-bottom:1px solid var(--gold-2); padding-bottom:6px; margin-bottom:6px;}
+  .cert-sign-label{font-family:var(--mono); font-size:10.5px; color:#999; letter-spacing:.04em;}
+  .cert-qr{display:flex; flex-direction:column; align-items:center; gap:6px; color:var(--gold-3);}
+  .cert-qr svg{width:34px; height:34px;}
+  .cert-qr span{font-family:var(--mono); font-size:9.5px; color:#999; letter-spacing:.06em;}
+  @media(max-width:600px){
+    .cert-mock-inner{padding:30px 22px;}
+    .cert-bottom{flex-direction:column; align-items:flex-start; gap:20px;}
+  }
+
+  /* TESTIMONIOS */
+  .testi{padding:100px 0;}
+  .testi-rating{display:flex; align-items:center; gap:16px; margin-bottom:44px; flex-wrap:wrap;}
+  .testi-rating .big{font-family:var(--display); font-size:44px; font-weight:700;}
+  .testi-rating .stars-gold{color:var(--gold-2); font-size:16px; letter-spacing:3px;}
+  .testi-rating .meta{font-family:var(--mono); font-size:11.5px; color:var(--ink-soft); letter-spacing:.04em;}
+  .google-badge{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-soft); border:1px solid var(--line); padding:8px 14px; border-radius:20px;}
+  .google-badge b{color:var(--ink);}
+  .testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line);}
+  .testi-card{
+    position:relative; background:#fff; padding:32px 28px; transition:transform .3s ease, box-shadow .3s ease;
+  }
+  .testi-card::before{content:''; position:absolute; top:0; left:0; width:100%; height:2px; background:var(--gold-line); opacity:0; transition:opacity .3s ease;}
+  .testi-card:hover{transform:translateY(-4px); box-shadow:0 20px 40px -14px rgba(0,0,0,.12); z-index:2;}
+  .testi-card:hover::before{opacity:1;}
+  .testi-stars{font-size:13px; letter-spacing:2px; color:var(--gold-2); margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;}
+  .testi-stars .g{width:16px; height:16px; opacity:.75;}
+  .testi-card p{font-size:15px; line-height:1.65; color:#222;}
+  .testi-who{display:flex; align-items:center; gap:12px; margin-top:22px;}
+  .testi-avatar{width:40px; height:40px; border-radius:50%; background:var(--ink); color:var(--gold-3); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:14px; border:1px solid var(--gold-2);}
+  .testi-who b{font-size:14px; display:block;}
+  .testi-who span{font-size:12.5px; color:var(--ink-soft);}
+
+  /* CURSOS */
+  .cursos{padding:100px 0;}
+  .curso-grid{display:grid; grid-template-columns:1fr 1fr; gap:28px;}
+  .curso-card{border:1px solid var(--ink); border-radius:var(--radius); padding:38px; display:flex; flex-direction:column; position:relative; overflow:hidden; transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, border-color .35s ease;}
+  .curso-card::before{content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(115deg, transparent 40%, rgba(203,168,94,.10) 50%, transparent 60%); transform:translateX(-140%); transition:transform .8s ease; pointer-events:none;}
+  .curso-card:hover::before{transform:translateX(140%);}
+  .curso-card:hover{transform:translateY(-6px); border-color:var(--gold-2); box-shadow:0 26px 50px -18px rgba(0,0,0,.18), 0 0 0 1px rgba(203,168,94,.25);}
+  .curso-card.featured:hover{border-color:var(--gold-3); box-shadow:0 26px 50px -18px rgba(0,0,0,.5), 0 0 0 1px rgba(203,168,94,.35);}
+  .curso-icon{width:44px; height:44px; border-radius:50%; border:1px solid var(--gold-2); display:flex; align-items:center; justify-content:center; margin-bottom:20px; color:var(--gold-1);}
+  .curso-card.featured .curso-icon{color:var(--gold-3); border-color:var(--gold-3);}
+  .curso-icon svg{width:20px; height:20px;}
+  .curso-card.featured{background:var(--ink); color:#fff;}
+  .curso-badge{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:8px;}
+  .curso-card.featured .curso-badge{color:#999;}
+  .curso-card h3{font-size:26px; margin-bottom:10px;}
+  .curso-card p.desc{font-size:14.5px; color:var(--ink-soft); line-height:1.6; margin-bottom:22px;}
+  .curso-card.featured p.desc{color:#bbb;}
+  .curso-meta{display:flex; gap:22px; font-family:var(--mono); font-size:12px; color:var(--ink-soft); margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid var(--line);}
+  .curso-card.featured .curso-meta{color:#999; border-bottom-color:#2a2a2a;}
+  .curso-modules{list-style:none; margin-bottom:28px; flex:1;}
+  .curso-modules li{display:flex; gap:12px; font-size:13.5px; padding:7px 0; color:var(--ink-soft);}
+  .curso-card.featured .curso-modules li{color:#ccc;}
+  .curso-modules li .mnum{font-family:var(--mono); color:var(--ink-faint); min-width:20px;}
+  .curso-card.featured .curso-modules li .mnum{color:#666;}
+  .curso-price{font-family:var(--display); font-size:30px; font-weight:700; margin-bottom:18px;}
+  .curso-price span{font-family:var(--mono); font-size:12px; color:var(--ink-soft); font-weight:400; display:block; margin-top:2px;}
+  .curso-card.featured .curso-price span{color:#999;}
+  .curso-actions{display:flex; gap:10px; flex-wrap:wrap;}
+  .curso-card.featured .btn-ghost{border-color:#fff; color:#fff;}
+  .curso-card.featured .btn-ghost:hover{background:#fff; color:#000;}
+  .curso-card.featured .btn-solid{background:#fff; color:#000; border-color:#fff;}
+
+  /* FAQ */
+  .faq{padding:100px 0;}
+  .faq-list{max-width:760px;}
+  .faq-item{border-top:1px solid var(--line);}
+  .faq-item:last-child{border-bottom:1px solid var(--line);}
+  .faq-item summary{
+    list-style:none; cursor:pointer; padding:24px 0; display:flex; justify-content:space-between; align-items:center;
+    font-family:var(--display); font-weight:600; font-size:17px;
+  }
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary .plus{font-family:var(--mono); font-size:20px; color:var(--ink-faint); transition:transform .25s ease;}
+  .faq-item[open] summary .plus{transform:rotate(45deg);}
+  .faq-item .faq-a{padding:0 0 26px; color:var(--ink-soft); font-size:14.5px; max-width:600px; line-height:1.65;}
+
+  /* CTA BAND */
+  .cta-band{padding:90px 0; text-align:center;}
+  .cta-band h2{font-size:clamp(28px,4vw,44px); max-width:620px; margin:0 auto 20px;}
+  .cta-band p{color:var(--ink-soft); max-width:460px; margin:0 auto 34px; font-size:15.5px;}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--line); padding:64px 0 32px;}
+  .foot-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; padding-bottom:48px;}
+  .foot-brand p{color:var(--ink-soft); font-size:13.5px; margin-top:14px; max-width:260px; line-height:1.6;}
+  .foot-col h4{font-family:var(--mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); margin-bottom:16px;}
+  .foot-col a{display:block; font-size:14px; color:var(--ink-soft); margin-bottom:10px;}
+  .foot-col a:hover{color:var(--ink);}
+  .foot-bottom{display:flex; justify-content:space-between; align-items:center; padding-top:28px; border-top:1px solid var(--line); font-size:12.5px; color:var(--ink-faint); flex-wrap:wrap; gap:12px;}
+
+  /* WHATSAPP FLOAT */
+  .wa-float{
+    position:fixed; bottom:24px; right:24px; width:56px; height:56px; border-radius:50%;
+    background:#0a0a0a; display:flex; align-items:center; justify-content:center; z-index:60;
+    box-shadow:0 10px 30px rgba(0,0,0,.28); transition:transform .2s ease;
+  }
+  .wa-float:hover{transform:scale(1.08);}
+  .wa-float svg{width:26px; height:26px; fill:#fff;}
+
+  @media(max-width:920px){
+    .hero-grid{grid-template-columns:1fr;}
+    .hero-media{order:-1; aspect-ratio:16/10;}
+    .free-grid{grid-template-columns:1fr;}
+    .benefit-grid{grid-template-columns:1fr 1fr;}
+    .results-grid{grid-template-columns:1fr 1fr;}
+    .result-stat:nth-child(3){border-left:none;}
+    .result-stat{border-top:1px solid var(--line); padding-top:24px;}
+    .testi-grid{grid-template-columns:1fr;}
+    .curso-grid{grid-template-columns:1fr;}
+    .foot-grid{grid-template-columns:1fr 1fr; row-gap:32px;}
+    .nav-links{display:none;}
+    .burger{display:flex;}
+  }
+  @media(max-width:600px){
+    .benefit-grid{grid-template-columns:1fr;}
+    .results-grid{grid-template-columns:1fr 1fr;}
+    .result-stat:nth-child(2n+1){border-left:none;}
+    .hero-stats{flex-wrap:wrap; gap:24px;}
+    .foot-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="logo"><b>BRESSATI</b> ACADEMY</div>
+    <div class="nav-links">
+      <a href="#cursos">Cursos</a>
+      <a href="#resultados">Resultados</a>
+      <a href="#faq">Preguntas</a>
+    </div>
+    <div class="nav-cta">
+      <a class="nav-login" href="academia.html">Iniciar sesión</a>
+      <a class="btn btn-solid" href="#cursos" style="padding:10px 20px; font-size:13.5px;">Comenzar ahora</a>
+      <button class="burger" aria-label="Menú"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="wrap hero-grid">
+    <div class="fade">
+      <div class="eyebrow">Academia online — Barber Studio Bressati</div>
+      <h1>De la tijera<br>al <span class="gold-text">negocio.</span></h1>
+      <p class="lead">Formación online para barberos que quieren dejar de vivir del día a día y construir un estudio de verdad. Técnica, sistema y marca personal — de la mano de Ivo Bressati.</p>
+      <div class="hero-actions">
+        <a href="#cursos" class="btn btn-solid">Comenzar ahora</a>
+        <a href="#clase-gratuita" class="btn btn-ghost">Ver clase gratuita</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><b>+70</b><span>ALUMNOS FORMADOS</span></div>
+        <div class="hero-stat"><b>14</b><span>MÓDULOS EN TOTAL</span></div>
+        <div class="hero-stat"><b>6</b><span>AÑOS DE OFICIO</span></div>
+      </div>
+    </div>
+    <div class="hero-media fade">
+      <video poster="" muted loop playsinline id="heroVideo">
+        <source src="" type="video/mp4">
+      </video>
+      <div class="hero-tag">Barber Studio Bressati — Cosquín</div>
+      <div class="play-btn" onclick="document.getElementById('heroVideo').paused ? document.getElementById('heroVideo').play() : document.getElementById('heroVideo').pause()">
+        <svg viewBox="0 0 24 24" fill="#0a0a0a"><path d="M8 5v14l11-7z"/></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLASE GRATUITA -->
+<section class="free-class band" id="clase-gratuita">
+  <div class="wrap free-grid">
+    <div class="fade">
+      <div class="eyebrow">Empezá por acá</div>
+      <h2 style="font-size:clamp(26px,3.2vw,36px);">Una clase gratis,<br>sin vueltas.</h2>
+      <p style="color:var(--ink-soft); margin-top:16px; font-size:15px; line-height:1.6;">Antes de pedirte que inviertas en vos, queremos que veas cómo enseñamos. Esta clase es 100% gratuita y te va a servir la tengas comprada o no.</p>
+      <ul class="free-list">
+        <li>Contenido real, sin relleno</li>
+        <li>Aplicable desde el primer día</li>
+        <li>Sin registro, sin tarjeta</li>
+      </ul>
+    </div>
+    <div class="fade">
+      <div class="free-media">
+        <video id="freeVideo" controls playsinline poster="">
+          <source src="" type="video/mp4">
+        </video>
+        <div class="free-overlay" id="freeOverlay">
+          <h3>¿Te sirvió esta clase?</h3>
+          <p>Esto es solo una probadita. Adentro de la Academia tenés el sistema completo, paso a paso.</p>
+          <a href="#cursos" class="btn btn-solid" style="background:#fff; color:#0a0a0a;">Ver los cursos</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFICIOS -->
+<section class="benefits" id="beneficios">
+  <div class="wrap">
+    <div class="sec-head fade">
+      <div class="eyebrow">Por qué estudiar acá</div>
+      <h2>No es otro curso de técnica.</h2>
+      <p>Es el sistema completo que separa a un barbero de un dueño de estudio.</p>
+    </div>
+    <div class="benefit-grid fade">
+      <div class="benefit-card"><div class="benefit-num">01</div><h3>Técnica premium</h3><p>Cortes, degradados y acabados con el mismo estándar que usamos todos los días en el estudio.</p></div>
+      <div class="benefit-card"><div class="benefit-num">02</div><h3>Sistema de gestión</h3><p>Cómo organizar turnos, precios y equipo sin que el negocio dependa 100% de vos.</p></div>
+      <div class="benefit-card"><div class="benefit-num">03</div><h3>Marca personal</h3><p>Construí una identidad que la gente reconozca y recomiende, no un local más.</p></div>
+      <div class="benefit-card"><div class="benefit-num">04</div><h3>Contenido a tu ritmo</h3><p>Accedé desde el celular o la compu, cuando quieras. Tu progreso se guarda solo.</p></div>
+      <div class="benefit-card"><div class="benefit-num">05</div><h3>Certificado</h3><p>Al terminar cada curso, descargás un certificado con tu nombre para mostrar tu formación.</p></div>
+      <div class="benefit-card"><div class="benefit-num">06</div><h3>Acompañamiento real</h3><p>Un botón directo para hablar con Ivo si te trabás en algo. Nada de foros vacíos.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTADOS -->
+<section class="results" id="resultados">
+  <div class="wrap">
+    <div class="sec-head fade">
+      <div class="eyebrow">Resultados de alumnos</div>
+      <h2>Números, no promesas.</h2>
+    </div>
+    <div class="results-grid fade">
+      <div class="result-stat" data-count="70" data-prefix="+"><b>0</b><span>Alumnos formados desde el lanzamiento</span></div>
+      <div class="result-stat" data-count="92" data-suffix="%"><b>0</b><span>Termina al menos un módulo en su primera semana</span></div>
+      <div class="result-stat" data-count="4.9" data-decimals="1"><b>0</b><span>Puntaje promedio de satisfacción</span></div>
+      <div class="result-stat" data-count="14"><b>0</b><span>Módulos disponibles entre ambos cursos</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ANTES Y DESPUES -->
+<section class="ba band">
+  <div class="wrap">
+    <div class="sec-head fade" style="margin:0 auto 44px; text-align:center;">
+      <div class="eyebrow" style="justify-content:center;"><span></span></div>
+      <h2>Antes y después</h2>
+      <p style="margin:0 auto;">Deslizá para ver la diferencia. Así trabajan los alumnos después de aplicar el sistema.</p>
+    </div>
+    <div class="fade">
+      <div class="ba-slider" id="baSlider">
+        <img class="after" src="" alt="Después" style="background:#1a1a1a;">
+        <div class="before-wrap" id="baBeforeWrap">
+          <img class="before" src="" alt="Antes" style="background:#3a3a3a;">
+        </div>
+        <div class="ba-handle" id="baHandle"></div>
+        <span class="ba-label l">Antes</span>
+        <span class="ba-label r">Después</span>
+      </div>
+      <p class="ba-note">Reemplazá las imágenes de este bloque por fotos reales de alumnos (antes.jpg / después.jpg)</p>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICADO -->
+<section class="cert-sec">
+  <div class="wrap">
+    <div class="sec-head fade" style="margin:0 auto 44px; text-align:center;">
+      <div class="eyebrow" style="justify-content:center;">Tu formación, certificada</div>
+      <h2>Un certificado que se nota.</h2>
+      <p style="margin:0 auto;">Al terminar cada curso, descargás un certificado personalizado con tu nombre, listo para mostrar.</p>
+    </div>
+    <div class="cert-mock fade">
+      <div class="cert-mock-inner">
+        <div class="cert-top">
+          <span class="cert-brand">BRESSATI ACADEMY</span>
+          <span class="cert-seal">★</span>
+        </div>
+        <div class="cert-mid">
+          <span class="cert-eyebrow">CERTIFICADO DE FINALIZACIÓN</span>
+          <h3 class="cert-name">Nombre del Alumno</h3>
+          <p class="cert-course">completó satisfactoriamente el curso <b>Barbería Inicial</b></p>
+        </div>
+        <div class="cert-bottom">
+          <div class="cert-sign">
+            <span class="cert-sign-line">Ivo Bressati</span>
+            <span class="cert-sign-label">Fundador — Barber Studio Bressati</span>
+          </div>
+          <div class="cert-qr" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><rect width="40" height="40" fill="none"/><g fill="currentColor">
+              <rect x="0" y="0" width="10" height="10"/><rect x="14" y="0" width="4" height="4"/><rect x="22" y="0" width="4" height="10"/><rect x="30" y="0" width="10" height="10"/>
+              <rect x="0" y="14" width="4" height="4"/><rect x="18" y="14" width="8" height="4"/><rect x="30" y="14" width="4" height="8"/>
+              <rect x="0" y="22" width="4" height="8"/><rect x="10" y="22" width="4" height="4"/><rect x="22" y="22" width="4" height="4"/>
+              <rect x="0" y="30" width="10" height="10"/><rect x="14" y="30" width="4" height="10"/><rect x="22" y="34" width="10" height="6"/>
+            </g></svg>
+            <span>Verificable</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section class="testi" id="testimonios">
+  <div class="wrap">
+    <div class="sec-head fade">
+      <div class="eyebrow">Testimonios</div>
+      <h2>Lo que dicen los que ya cursaron.</h2>
+    </div>
+    <div class="testi-rating fade">
+      <span class="big">4.9</span>
+      <div>
+        <div class="stars-gold">★★★★★</div>
+        <div class="meta">BASADO EN +70 RESEÑAS DE ALUMNOS</div>
+      </div>
+      <span class="google-badge">★ <b>4.9</b> en Google Reviews</span>
+    </div>
+    <div class="testi-grid fade">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p>"Vengo de años cortando sin ningún orden. En un mes de academia organicé precios, turnos y hasta mi Instagram."</p>
+        <div class="testi-who"><div class="testi-avatar">M</div><div><b>Martín R.</b><span>Barbero — Córdoba</span></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p>"La parte de marca personal me cambió la cabeza. Dejé de competir por precio y empecé a competir por identidad."</p>
+        <div class="testi-who"><div class="testi-avatar">L</div><div><b>Lucas F.</b><span>Dueño de barbería — Rosario</span></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p>"El certificado lo colgué en el local. Los clientes lo preguntan y suma un montón a la confianza."</p>
+        <div class="testi-who"><div class="testi-avatar">D</div><div><b>Daniela S.</b><span>Barbera — Mendoza</span></div></div>
+      </div>
+    </div>
+    <p class="ba-note" style="margin-top:18px;">Reemplazá estos testimonios por reseñas reales — idealmente con foto y link a la reseña de Google.</p>
+  </div>
+</section>
+
+<!-- CURSOS -->
+<section class="cursos band" id="cursos">
+  <div class="wrap">
+    <div class="sec-head fade">
+      <div class="eyebrow">Cursos disponibles</div>
+      <h2>Elegí por dónde empezar.</h2>
+      <p>Podés arrancar por la base o, si ya tenés oficio, ir directo a perfeccionamiento.</p>
+    </div>
+    <div class="curso-grid fade">
+      <div class="curso-card">
+        <div class="curso-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 8.5 19 19M19 5 8.5 15.5"/></svg></div>
+        <div class="curso-badge">Curso 01 · Nivel inicial</div>
+        <h3>Barbería Inicial</h3>
+        <p class="desc">La base completa: técnica, herramientas, atención al cliente y primeros pasos de negocio. Diez módulos para arrancar con todo en orden.</p>
+        <div class="curso-meta"><span>10 MÓDULOS</span><span>+8 HS DE VIDEO</span><span>ACCESO DE POR VIDA</span></div>
+        <ul class="curso-modules">
+          <li><span class="mnum">01</span> Fundamentos y herramientas</li>
+          <li><span class="mnum">02</span> Cortes clásicos</li>
+          <li><span class="mnum">03</span> Degradados</li>
+          <li><span class="mnum">04</span> Barba y afeitado</li>
+          <li><span class="mnum">05</span> Atención al cliente</li>
+          <li><span class="mnum">···</span> + 5 módulos más</li>
+        </ul>
+        <div class="curso-price">$XX.XXX <span>PAGO ÚNICO</span></div>
+        <div class="curso-actions">
+          <button class="btn btn-solid" style="flex:1;" onclick="openCheckout('barberia-inicial','Barbería Inicial')">Quiero inscribirme</button>
+          <a href="https://wa.me/5493541288967?text=Hola%20Ivo!%20Tengo%20una%20duda%20sobre%20el%20curso%20Barber%C3%ADa%20Inicial%20antes%20de%20anotarme" class="btn btn-ghost">Hablar antes</a>
+        </div>
+      </div>
+      <div class="curso-card featured">
+        <div class="curso-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 14.5 9 22 9 16 13.5 18 21 12 16.5 6 21 8 13.5 2 9 9.5 9Z"/></svg></div>
+        <div class="curso-badge">Curso 02 · Perfeccionamiento</div>
+        <h3>Perfeccionamiento</h3>
+        <p class="desc">Para barberos con oficio que quieren llevar su nivel técnico y su negocio a otra categoría. Cuatro módulos profesionales, sin relleno.</p>
+        <div class="curso-meta"><span>4 MÓDULOS</span><span>+4 HS DE VIDEO</span><span>ACCESO DE POR VIDA</span></div>
+        <ul class="curso-modules">
+          <li><span class="mnum">01</span> Técnicas avanzadas</li>
+          <li><span class="mnum">02</span> Diseño y detalle</li>
+          <li><span class="mnum">03</span> Construcción de marca</li>
+          <li><span class="mnum">04</span> Escalar el negocio</li>
+        </ul>
+        <div class="curso-price">$XX.XXX <span>PAGO ÚNICO</span></div>
+        <div class="curso-actions">
+          <button class="btn btn-solid" style="flex:1;" onclick="openCheckout('perfeccionamiento','Perfeccionamiento')">Quiero inscribirme</button>
+          <a href="https://wa.me/5493541288967?text=Hola%20Ivo!%20Tengo%20una%20duda%20sobre%20el%20curso%20Perfeccionamiento%20antes%20de%20anotarme" class="btn btn-ghost">Hablar antes</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="wrap">
+    <div class="sec-head fade">
+      <div class="eyebrow">Preguntas frecuentes</div>
+      <h2>Todo lo que necesitás saber.</h2>
+    </div>
+    <div class="faq-list fade">
+      <details class="faq-item">
+        <summary>¿Necesito experiencia previa para el curso Barbería Inicial? <span class="plus">+</span></summary>
+        <div class="faq-a">No. Está pensado para arrancar de cero, con una progresión clara módulo a módulo.</div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Por cuánto tiempo tengo acceso al curso? <span class="plus">+</span></summary>
+        <div class="faq-a">El acceso es de por vida. Podés volver a ver cualquier módulo cuando quieras, desde cualquier dispositivo.</div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Cómo pago si estoy fuera de Argentina? <span class="plus">+</span></summary>
+        <div class="faq-a">Ofrecemos Mercado Pago para Argentina y Stripe para pagos internacionales, con tarjeta de crédito o débito.</div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Recibo un certificado? <span class="plus">+</span></summary>
+        <div class="faq-a">Sí. Al completar el 100% de un curso, se genera automáticamente tu certificado personalizado para descargar.</div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Puedo ver las clases desde el celular? <span class="plus">+</span></summary>
+        <div class="faq-a">Sí, la plataforma está pensada primero para mobile. También podés verla desde tablet o computadora.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-band band">
+  <div class="wrap fade">
+    <h2>Tu estudio no se construye solo.</h2>
+    <p>Empezá hoy con el módulo uno. Tu progreso queda guardado, avanzás cuando puedas.</p>
+    <a href="#cursos" class="btn btn-solid">Comenzar ahora</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><b>BRESSATI</b> ACADEMY</div>
+        <p>La formación online de Barber Studio Bressati. Técnica, sistema y marca personal para barberos que quieren crecer.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Academia</h4>
+        <a href="#cursos">Cursos</a>
+        <a href="#clase-gratuita">Clase gratuita</a>
+        <a href="academia.html">Iniciar sesión</a>
+      </div>
+      <div class="foot-col">
+        <h4>Barber Studio</h4>
+        <a href="https://bressatistudio1.site.agendapro.com/ar" target="_blank">Reservar turno</a>
+        <a href="https://instagram.com/barberstudio.bressati" target="_blank">Instagram</a>
+        <a href="https://tiktok.com/@barberstudiobressati" target="_blank">TikTok</a>
+      </div>
+      <div class="foot-col">
+        <h4>Contacto</h4>
+        <a href="https://wa.me/5493541288967" target="_blank">WhatsApp</a>
+        <a href="mailto:hola@barberstudiobressati.com">Email</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Barber Studio Bressati — Cosquín, Córdoba</span>
+      <span>San Martín 1321, Cosquín</span>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/5493541288967?text=Hola!%20Quiero%20info%20de%20la%20Academia%20Bressati" target="_blank" aria-label="WhatsApp">
+  <svg viewBox="0 0 32 32"><path d="M16.01 3C9.38 3 4 8.38 4 15.01c0 2.39.7 4.62 1.9 6.5L4 29l7.66-1.86a11.9 11.9 0 0 0 4.35.82h.01c6.63 0 12-5.38 12-12.01C28.02 8.38 22.64 3 16.01 3zm0 21.8h-.01a9.8 9.8 0 0 1-4.99-1.37l-.36-.21-3.72.9.99-3.63-.24-.37a9.78 9.78 0 0 1-1.5-5.11c0-5.42 4.41-9.83 9.84-9.83 2.63 0 5.1 1.03 6.96 2.89a9.75 9.75 0 0 1 2.88 6.95c0 5.42-4.42 9.83-9.85 9.83zm5.4-7.37c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.04-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.87 1.22 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35z"/></svg>
+</a>
+
+<script>
+  // Scroll fade-in
+  const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('in')), {threshold:.12});
+  document.querySelectorAll('.fade').forEach(el => io.observe(el));
+
+  // Contador animado — resultados
+  const counterIo = new IntersectionObserver(es => es.forEach(e => {
+    if(!e.isIntersecting || e.target.classList.contains('counted')) return;
+    e.target.classList.add('counted','in');
+    const el = e.target;
+    const target = parseFloat(el.dataset.count);
+    const decimals = parseInt(el.dataset.decimals || '0');
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const bEl = el.querySelector('b');
+    const dur = 1100, start = performance.now();
+    function tick(now){
+      const p = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const val = target * eased;
+      bEl.textContent = prefix + val.toFixed(decimals) + suffix;
+      if(p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }), {threshold:.4});
+  document.querySelectorAll('.result-stat[data-count]').forEach(el => counterIo.observe(el));
+
+  // Free video end CTA
+  const freeVideo = document.getElementById('freeVideo');
+  const freeOverlay = document.getElementById('freeOverlay');
+  freeVideo.addEventListener('ended', () => freeOverlay.classList.add('show'));
+
+  // Antes/después slider
+  const slider = document.getElementById('baSlider');
+  const beforeWrap = document.getElementById('baBeforeWrap');
+  const handle = document.getElementById('baHandle');
+  function setSlider(pct){
+    pct = Math.max(0, Math.min(100, pct));
+    beforeWrap.style.width = pct + '%';
+    handle.style.left = pct + '%';
+  }
+  let dragging = false;
+  slider.addEventListener('pointerdown', () => dragging = true);
+  window.addEventListener('pointerup', () => dragging = false);
+  window.addEventListener('pointermove', e => {
+    if(!dragging) return;
+    const r = slider.getBoundingClientRect();
+    setSlider(((e.clientX - r.left) / r.width) * 100);
+  });
+  slider.addEventListener('click', e => {
+    const r = slider.getBoundingClientRect();
+    setSlider(((e.clientX - r.left) / r.width) * 100);
+  });
+
+  // Mobile burger -> scroll to cursos as simple fallback
+  document.querySelector('.burger').addEventListener('click', () => {
+    document.getElementById('cursos').scrollIntoView({behavior:'smooth'});
+  });
+</script>
+<!-- MODAL CHECKOUT -->
+<div class="checkout-overlay" id="checkoutOverlay">
+  <div class="checkout-box">
+    <button class="checkout-close" id="checkoutClose" aria-label="Cerrar">✕</button>
+    <div class="eyebrow">Inscripción</div>
+    <h3 id="checkoutCourseTitle">Curso</h3>
+    <div class="field"><label>Nombre y apellido</label><input type="text" id="checkoutName"></div>
+    <div class="field"><label>Email</label><input type="email" id="checkoutEmail"></div>
+    <div class="field"><label>Cupón (opcional)</label><input type="text" id="checkoutCoupon" style="text-transform:uppercase;"></div>
+    <div class="field">
+      <label>Medio de pago</label>
+      <div class="pay-methods">
+        <button class="pay-method active" data-method="mercadopago" type="button">Mercado Pago<span>Argentina</span></button>
+        <button class="pay-method" data-method="stripe" type="button">Tarjeta internacional<span>Stripe</span></button>
+      </div>
+    </div>
+    <button class="btn btn-solid" id="checkoutSubmit" style="width:100%; margin-top:10px;">Continuar al pago</button>
+    <p id="checkoutError" style="color:#b3261e; font-size:13px; margin-top:10px; display:none;"></p>
+    <p style="font-size:12px; color:var(--ink-faint); margin-top:16px; text-align:center;">Vas a recibir un email para activar tu cuenta apenas se confirme el pago.</p>
+  </div>
+</div>
+
+<style>
+  .checkout-overlay{position:fixed; inset:0; background:rgba(10,10,10,.55); display:none; align-items:center; justify-content:center; z-index:250; padding:20px;}
+  .checkout-overlay.open{display:flex;}
+  .checkout-box{background:#fff; border-radius:var(--radius); padding:36px; max-width:420px; width:100%; position:relative; box-shadow:0 0 0 1px rgba(203,168,94,.3), 0 30px 60px -20px rgba(0,0,0,.35);}
+  .checkout-close{position:absolute; top:16px; right:16px; background:none; border:none; font-size:16px; cursor:pointer; color:var(--ink-soft);}
+  .checkout-box h3{font-size:20px; margin-bottom:20px;}
+  .checkout-box .field label{display:block; font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin-bottom:8px;}
+  .checkout-box .field input{width:100%; padding:12px 13px; border:1px solid var(--line); border-radius:var(--radius); font-size:14px; font-family:var(--body); outline:none; margin-bottom:16px;}
+  .checkout-box .field input:focus{border-color:var(--gold-2);}
+  .pay-methods{display:flex; gap:10px; margin-bottom:6px;}
+  .pay-method{flex:1; border:1px solid var(--line); border-radius:var(--radius); padding:12px 10px; background:#fff; cursor:pointer; text-align:left; font-size:13px; font-weight:600; transition:border-color .2s;}
+  .pay-method span{display:block; font-family:var(--mono); font-size:10.5px; font-weight:400; color:var(--ink-soft); margin-top:2px;}
+  .pay-method.active{border-color:var(--ink); box-shadow:0 0 0 1px var(--ink);}
+</style>
+
+<script>
+  // ====================== CHECKOUT ======================
+  const SUPABASE_FUNCTIONS_URL = "https://uloxovtuudgdtxoltmqj.supabase.co/functions/v1/create-checkout";
+  let CHECKOUT_COURSE = null;
+  let CHECKOUT_METHOD = 'mercadopago';
+
+  function openCheckout(courseId, courseTitle){
+    CHECKOUT_COURSE = courseId;
+    document.getElementById('checkoutCourseTitle').textContent = courseTitle;
+    document.getElementById('checkoutError').style.display = 'none';
+    document.getElementById('checkoutOverlay').classList.add('open');
+  }
+  window.openCheckout = openCheckout;
+  document.getElementById('checkoutClose').addEventListener('click', ()=> document.getElementById('checkoutOverlay').classList.remove('open'));
+
+  document.querySelectorAll('.pay-method').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.pay-method').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      CHECKOUT_METHOD = btn.dataset.method;
+    });
+  });
+
+  document.getElementById('checkoutSubmit').addEventListener('click', async ()=>{
+    const name = document.getElementById('checkoutName').value.trim();
+    const email = document.getElementById('checkoutEmail').value.trim();
+    const coupon = document.getElementById('checkoutCoupon').value.trim();
+    const errEl = document.getElementById('checkoutError');
+    const btn = document.getElementById('checkoutSubmit');
+    if(!name || !email){ errEl.textContent = 'Completá tu nombre y tu email.'; errEl.style.display = 'block'; return; }
+    btn.disabled = true; btn.textContent = 'Generando el pago...';
+    try{
+      const resp = await fetch(SUPABASE_FUNCTIONS_URL, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ course_id: CHECKOUT_COURSE, buyer_name: name, buyer_email: email, method: CHECKOUT_METHOD, coupon_code: coupon || undefined })
+      });
+      const data = await resp.json();
+      if(!resp.ok || !data.url) throw new Error(data.error || 'No se pudo generar el pago.');
+      window.location.href = data.url;
+    }catch(e){
+      errEl.textContent = 'No se pudo iniciar el pago. Probá de nuevo o escribinos por WhatsApp.';
+      errEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Continuar al pago';
+    }
+  });
+</script>
+
+</body>
+</html>
