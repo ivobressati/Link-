@@ -173,6 +173,7 @@ select option{background:#111}
   <button class="nav-tab" onclick="showPage('perdidos',this)" id="tabPerdidos">Perdidos</button>
   <button class="nav-tab" onclick="showPage('finanzas',this)">💰 Finanzas</button>
   <button class="nav-tab" onclick="showPage('pagos',this)">💵 Pagos</button>
+  <button class="nav-tab" onclick="showPage('dashboard',this)">📊 Dashboard</button>
 </div>
 
 <!-- ══ CLIENTES ══ -->
@@ -251,6 +252,10 @@ select option{background:#111}
         <div class="srv-opt" data-id="cc_llegada" data-turno="llegada" onclick="selServicio(this)">
           <div class="srv-opt-precio">$27.000</div>
           <div class="srv-opt-nombre">Corte + Cera</div>
+        </div>
+        <div class="srv-opt" data-id="cera_llegada" data-turno="llegada" onclick="selServicio(this)">
+          <div class="srv-opt-precio">$15.000</div>
+          <div class="srv-opt-nombre">Cera</div>
         </div>
       </div>
       <div class="srv-sector-title" style="margin-top:16px"><span class="srv-sector-badge badge-turno">🗓 CON TURNO — GONZA / BRUNO / MARCOS</span></div>
@@ -347,8 +352,9 @@ select option{background:#111}
       <tr><td>Corte Medio</td><td><span class="tag tag-llegada">Orden llegada</span></td><td>Todos</td><td class="precio">$12.000</td></tr>
       <tr><td>Corte</td><td><span class="tag tag-llegada">Orden llegada</span></td><td>Todos</td><td class="precio">$14.000</td></tr>
       <tr><td>Corte + Barba</td><td><span class="tag tag-llegada">Orden llegada</span></td><td>Todos</td><td class="precio">$17.000</td></tr>
-      <tr><td>Corte</td><td><span class="tag tag-turno">Con turno</span></td><td>Gonza / Bruno / Marcos</td><td class="precio">$17.000</td></tr>
       <tr><td>Corte + Cera</td><td><span class="tag tag-llegada">Orden llegada</span></td><td>Todos</td><td class="precio">$27.000</td></tr>
+      <tr><td>Cera</td><td><span class="tag tag-llegada">Orden llegada</span></td><td>Todos</td><td class="precio">$15.000</td></tr>
+      <tr><td>Corte</td><td><span class="tag tag-turno">Con turno</span></td><td>Gonza / Bruno / Marcos</td><td class="precio">$17.000</td></tr>
       <tr><td>Corte + Cera</td><td><span class="tag tag-turno">Con turno</span></td><td>Gonza / Bruno / Marcos</td><td class="precio">$30.000</td></tr>
       <tr><td>Corte + Barba</td><td><span class="tag tag-turno">Con turno</span></td><td>Gonza / Bruno / Marcos</td><td class="precio">$22.000</td></tr>
       <tr><td>Corte</td><td><span class="tag tag-ivo">Con turno</span></td><td>Ivo</td><td class="precio">$20.000</td></tr>
@@ -603,6 +609,30 @@ select option{background:#111}
   <div id="pagosResumenBarberos" style="display:flex;flex-direction:column;gap:10px"></div>
 </div>
 
+<!-- ══ DASHBOARD ══ -->
+<div class="page" id="pageDashboard">
+  <div style="height:20px"></div>
+  <div class="week-nav">
+    <button onclick="dashCambiarSemana(-1)">◀</button>
+    <div class="week-label" id="dashWeekLabel">Esta semana</div>
+    <button onclick="dashCambiarSemana(1)">▶</button>
+  </div>
+  <div class="stats" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat" style="background:rgba(39,174,96,.08)"><div class="stat-num" style="color:var(--green)" id="dashIngresos">$0</div><div class="stat-lbl">Total Ingresos</div></div>
+    <div class="stat" style="background:rgba(192,57,43,.08)"><div class="stat-num" style="color:#e74c3c" id="dashGastos">$0</div><div class="stat-lbl">Total Gastos</div></div>
+    <div class="stat" style="background:rgba(212,175,55,.08)"><div class="stat-num" id="dashGanancia">$0</div><div class="stat-lbl">Ganancia</div></div>
+  </div>
+  <div class="sec-title" style="margin-top:24px">Ingreso por Categoría</div>
+  <div class="form-card" style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;justify-content:center">
+    <div id="dashDonut" style="width:160px;height:160px;border-radius:50%;flex-shrink:0;position:relative"></div>
+    <div id="dashDonutLegend" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+  <div class="sec-title" style="margin-top:24px">Ingresos por Día (Semana)</div>
+  <div class="form-card" id="dashBarsDias"></div>
+  <div class="sec-title" style="margin-top:24px">Ventas de Productos (Semana)</div>
+  <div id="dashProductos" class="clients-list"></div>
+</div>
+
 <!-- ══ MODAL EDITAR ══ -->
 <div class="modal-overlay" id="modalEditar">
   <div class="modal">
@@ -714,6 +744,7 @@ const PRECIOS = [
   {id:'corte_llegada',   nombre:'Corte',           tipo:'Orden llegada', barbero:'todos', precio:14000},
   {id:'cb_llegada',      nombre:'Corte + Barba',   tipo:'Orden llegada', barbero:'todos', precio:17000},
   {id:'cc_llegada',      nombre:'Corte + Cera',    tipo:'Orden llegada', barbero:'todos', precio:27000},
+  {id:'cera_llegada',    nombre:'Cera',            tipo:'Orden llegada', barbero:'todos', precio:15000},
   {id:'corte_turno_gb',  nombre:'Corte',           tipo:'Con turno',     barbero:'Gonza/Bruno/Marcos', precio:17000},
   {id:'cc_turno_gb',     nombre:'Corte + Cera',    tipo:'Con turno',     barbero:'Gonza/Bruno/Marcos', precio:30000},
   {id:'cb_turno_gb',     nombre:'Corte + Barba',   tipo:'Con turno',     barbero:'Gonza/Bruno/Marcos', precio:22000},
@@ -794,7 +825,6 @@ function getRango(n){
 function hoyStr(){
   const now=new Date();
   const h=now.getHours();
-  // Día válido: 9am a 11pm. Antes de las 9 cuenta como ayer.
   const base=new Date(now);
   if(h<9) base.setDate(base.getDate()-1);
   return `${base.getFullYear()}-${String(base.getMonth()+1).padStart(2,'0')}-${String(base.getDate()).padStart(2,'0')}`;
@@ -803,13 +833,12 @@ function hoyStr(){
 function getWeekRange(off=0){
   const now=new Date();
   const fmt=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  const day=now.getDay(); // 0=dom,1=lun...6=sab
-  // Domingo: va a semana siguiente (off+1 desde lunes)
+  const day=now.getDay();
   const diasDesde=day===0?-6:1-day;
   const lu=new Date(now);
   lu.setDate(now.getDate()+diasDesde+off*7);
   lu.setHours(0,0,0,0);
-  const sa=new Date(lu);sa.setDate(lu.getDate()+5); // sábado
+  const sa=new Date(lu);sa.setDate(lu.getDate()+5);
   return[fmt(lu),fmt(sa)];
 }
 
@@ -984,7 +1013,6 @@ function selPagoModal(tipo){
 function selServicio(el){
   document.querySelectorAll('.srv-opt').forEach(e=>e.classList.remove('selected'));
   selPago('efectivo');
-  // Reset trabajo especial
   const pan=document.getElementById('panelTrabajoEsp');if(pan)pan.style.display='none';
   const btnTE=document.getElementById('btnTrabajoEsp');if(btnTE){btnTE.style.borderColor='var(--border)';btnTE.style.background='#0d0d0d';}
   const iconTE=document.getElementById('iconTrabajoEsp');if(iconTE){iconTE.textContent='＋';iconTE.style.color='var(--gray)';}
@@ -992,7 +1020,6 @@ function selServicio(el){
   const fTEN=document.getElementById('fTrabEspNombre');if(fTEN)fTEN.value='';
   const fTEP=document.getElementById('fTrabEspPrecio');if(fTEP)fTEP.value='';
   const fTEB=document.getElementById('fTrabEspBarbero');if(fTEB)fTEB.value='';
-  // Resetear comisión
   const fC=document.getElementById('fComision');if(fC)fC.value='50';
   const bCE=document.getElementById('btnComisionExtra');
   const badgeCE=document.getElementById('badgeComisionExtra');
@@ -1061,7 +1088,6 @@ async function agregarCliente(){
   const precio=getPrecio(servicio);
   const pago=document.getElementById('fPago').value||'efectivo';
   const comision=parseInt(document.getElementById('fComision').value)||50;
-  // Trabajo especial
   const trabActivo=document.getElementById('fTrabEspActivo').value==='1';
   const trabNombre=document.getElementById('fTrabEspNombre').value.trim();
   const trabPrecio=parseFloat(document.getElementById('fTrabEspPrecio').value)||0;
@@ -1113,13 +1139,13 @@ function confirmarCorte(id,servId){
     const comisionModal=document.getElementById('fComisionModal')?parseInt(document.getElementById('fComisionModal').value):50;
   c.precios.push({fecha:hoy,precio:getPrecio(servId),servicio:servId,pago:pagoModal,barbero:barbModal||c.barbero,comision:comisionModal});
   }
+  c.recordatorio_enviado=false;
   const msg=buildMsgCorte(c);
   save();
   mostrarSync('☁️ Guardando...');
   guardarEnNube(c).then(()=>ocultarSync()).catch(e=>console.error(e));
   encolarMensaje(c.tel, msg, c.id);
   renderAll();
-  // Mostrar mensaje y botón WhatsApp en el modal sin cerrar
   const tel=c.tel.startsWith('54')?c.tel:'549'+c.tel;
   const url='https://wa.me/'+tel+'?text='+encodeURIComponent(msg).replace(/%20/g,'+');
   document.getElementById('modalPrecioSelector').style.display='none';
@@ -1143,7 +1169,6 @@ function abrirModal(id,perdido,mostrarSelector){
   document.getElementById('modalMsg').textContent=msg;
   document.getElementById('modalWspBtn').href='https://wa.me/'+tel+'?text='+encodeURIComponent(msg).replace(/%20/g,'+');
   document.getElementById('modalDelBtn').onclick=()=>eliminarCliente(id);
-  // Botón contactado (solo para perdidos)
   let btnCont=document.getElementById('modalContBtn');
   if(!btnCont){
     btnCont=document.createElement('button');
@@ -1168,10 +1193,8 @@ function abrirModal(id,perdido,mostrarSelector){
   const btnC=document.getElementById('modalContBtn');if(btnC)btnC.style.display='none';
   if(mostrarSelector){
     sel.style.display='block';
-    // Resetear toggle 80%
     const inp80=document.getElementById('fComisionModal');
     if(inp80){inp80.value='50';const btn80=document.getElementById('btn80pct');const badge80=document.getElementById('badge80pct');if(btn80){btn80.style.borderColor='var(--border)';btn80.style.background='#0d0d0d';badge80.style.color='var(--gray)';badge80.textContent='50%';btn80.querySelector('div div:last-child').textContent='Tocá para marcar como 80%';}}
-    // Pre-seleccionar barbero actual
     const barbActual=c.barbero||'';
     document.getElementById('fBarberoModal').value=barbActual;
     ['Ivo','Gonza','Bruno','Marcos'].forEach(b=>{
@@ -1245,7 +1268,6 @@ function abrirEditar(id){
   document.getElementById('editarId').value=id;
   document.getElementById('editarNombre').textContent=c.nombre;
   document.getElementById('editarBarbero').value=c.barbero||'';
-  // Leer pago del último precio
   const lastP=c.precios&&c.precios[c.precios.length-1];
   const pagoActual=lastP&&lastP.pago?lastP.pago:'efectivo';
   document.getElementById('editarPago').value=pagoActual;
@@ -1277,7 +1299,6 @@ async function guardarEdicion(){
   const id=parseInt(document.getElementById('editarId').value);
   const c=clientes.find(x=>x.id===id);if(!c)return;
   c.barbero=document.getElementById('editarBarbero').value;
-  // Actualizar pago en el último registro
   const nuevoPago=document.getElementById('editarPago').value;
   if(c.precios&&c.precios.length>0){
     c.precios[c.precios.length-1].pago=nuevoPago;
@@ -1299,8 +1320,21 @@ function eliminarCliente(id){
   eliminarDeNube(id).then(()=>ocultarSync()).catch(e=>console.error(e));
 }
 
+// ══ SEGURIDAD: SECCIONES PROTEGIDAS ══
+const CLAVE_ADMIN='vitto201224';
+let desbloqueado = sessionStorage.getItem('bressati_unlocked')==='1';
+
 // ══ NAV ══
 function showPage(p,btn){
+  if(p!=='clientes' && !desbloqueado){
+    const intento=prompt('🔒 Ingresá la contraseña para acceder a esta sección:');
+    if(intento!==CLAVE_ADMIN){
+      if(intento!==null) alert('Contraseña incorrecta');
+      return;
+    }
+    desbloqueado=true;
+    sessionStorage.setItem('bressati_unlocked','1');
+  }
   document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));
   document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).classList.add('active');
@@ -1311,6 +1345,7 @@ function showPage(p,btn){
   if(p==='precios')renderPrecios();
   if(p==='finanzas')initFinanzas();
   if(p==='pagos')renderPagos();
+  if(p==='dashboard')renderDashboard();
 }
 
 function setFiltro(f){
@@ -1396,7 +1431,6 @@ function renderRanking(){
   const hoy=hoyStr();
   const [semIni,semFin]=getWeekRange(0);
 
-  // Cortes del mes por barbero
   const dataMes=barberos.map(b=>{
     const mis=clientes.filter(c=>c.barbero===b);
     const cortesMes=mis.reduce((a,c)=>{
@@ -1434,7 +1468,6 @@ function renderRanking(){
   document.getElementById('rankingBarbMes').innerHTML=mkBarbList(porMes,'cortesMes','ESTE MES',medallasMes,clsMes);
   document.getElementById('rankingBarbTotal').innerHTML=mkBarbList(porTot,'cortesTotal','HISTÓRICO',medallasMes,clsMes);
 
-  // Mini actividad por barbero
   document.getElementById('rankingActividad').innerHTML=dataMes.map(b=>`
     <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--white);min-width:70px">${b.nombre}</div>
@@ -1526,8 +1559,8 @@ function renderPerdidos(){
   const ahora=Date.now();
   const lista=clientes.filter(c=>{
     const dias=diasDesde(c)||0;
-    if(dias<=15) return false; // ya vino recientemente
-    // Si fue contactado hace menos de 7 días, ocultar
+    if(dias<=15) return false;
+    if(c.recordatorio_enviado) return false;
     if(c.contactado){
       const diasContactado=Math.floor((ahora-new Date(c.contactado))/(864e5));
       if(diasContactado<7) return false;
@@ -1535,7 +1568,6 @@ function renderPerdidos(){
     return true;
   }).sort((a,b)=>(diasDesde(b)||0)-(diasDesde(a)||0));
   document.getElementById('perdidosCount').textContent=lista.length;
-  // Mostrar preview del mensaje con el primer cliente de la lista
   const prev=document.getElementById('previewMsgPerdido');
   if(prev){
     if(lista.length>0){
@@ -1670,7 +1702,6 @@ async function renderFinanzas(){
   const ingMes=calcIngresosMes();
   const[gastoSem,gastoMes]=await Promise.all([getGastosSemana(finSemOff),getGastosMes()]);
   const netaSem=ingSem-gastoSem,netaMes=ingMes-gastoMes;
-  // Stats de hoy
   const hoyF=hoyStr();
   const cortesHoyF=clientes.reduce((a,c)=>a+(c.visitas||[]).filter(v=>v===hoyF).length,0);
   const psHoy=clientes.flatMap(c=>(c.precios||[]).filter(p=>p.fecha===hoyF));
@@ -1841,20 +1872,16 @@ async function renderBalance(){
   const esSem=balTab==='sem';
   const [ini,fin]=esSem?finGetWeekRange(finSemOff):getMesRange();
 
-  // Ingresos cortes
   const ingCortes=clientes.reduce((total,c)=>{
     const ps=(c.precios||[]).filter(p=>p.fecha>=ini&&p.fecha<=fin);
     return total+ps.reduce((s,p)=>s+(p.precio||0),0);
   },0);
 
-  // Productos
   await cargarVentasCera();
   const ingProd=(ventasCera||[]).filter(v=>v.fecha>=ini&&v.fecha<=fin).reduce((s,v)=>s+v.monto,0);
 
-  // Sueldos barberos (50% de cortes)
   const sueldos=Math.round(ingCortes*0.5);
 
-  // Gastos
   let gastos=0;
   try{
     const gData=await sbFetch('gastos?fecha=gte.'+ini+'&fecha=lte.'+fin+'&select=monto');
@@ -1902,7 +1929,6 @@ function pagoscambiarSemana(dir){
   if(pagosSemOff>0)pagosSemOff=0;
   renderPagos();
 }
-// alias typo en HTML
 function pagoschangiarSemana(dir){ pagoscambiarSemana(dir); }
 
 async function renderPagos(){
@@ -1930,10 +1956,8 @@ async function renderPagos(){
   const totalBarberos=Math.round(totalBruto*0.5);
   const mitadBarberia=Math.round(totalBruto*0.5);
 
-  // Ventas de productos de la semana
   const ventas=(ventasCera||[]).filter(v=>v.fecha>=ini&&v.fecha<=fin).reduce((s,v)=>s+v.monto,0);
 
-  // Gastos de la semana desde Supabase
   let gastosSem=0;
   try{
     const gData=await sbFetch('gastos?fecha=gte.'+ini+'&fecha=lte.'+fin+'&select=monto');
@@ -1950,7 +1974,6 @@ async function renderPagos(){
 
   const iconos={Ivo:'👑',Gonza:'✂️',Bruno:'✂️',Marcos:'✂️'};
 
-  // Resumen detallado por barbero
   document.getElementById('pagosResumenBarberos').innerHTML=items.map(b=>{
     const mis=clientes.filter(c=>c.barbero===b.nombre);
     const psSem=mis.flatMap(c=>(c.precios||[]).filter(p=>p.fecha>=ini&&p.fecha<=fin));
@@ -2041,6 +2064,83 @@ async function renderPagos(){
       </div>
     </div>
   `).join('');
+}
+
+// ══ MÓDULO DASHBOARD ══
+let dashSemOff = 0;
+function dashCambiarSemana(dir){ dashSemOff+=dir; if(dashSemOff>0)dashSemOff=0; renderDashboard(); }
+
+async function renderDashboard(){
+  document.getElementById('dashWeekLabel').textContent = finWeekLabel(dashSemOff);
+  const [ini,fin] = finGetWeekRange(dashSemOff);
+
+  const psSem = clientes.flatMap(c=>(c.precios||[]).filter(p=>p.fecha>=ini&&p.fecha<=fin));
+  const ingCortes = psSem.reduce((s,p)=>s+(p.precio||0),0);
+
+  await cargarVentasCera();
+  const ventasSem = (ventasCera||[]).filter(v=>v.fecha>=ini&&v.fecha<=fin);
+  const ingProductos = ventasSem.reduce((s,v)=>s+v.monto,0);
+  const totalIng = ingCortes+ingProductos;
+
+  let gastos=0;
+  try{
+    const gData = await sbFetch('gastos?fecha=gte.'+ini+'&fecha=lte.'+fin+'&select=monto');
+    if(gData) gastos = gData.reduce((s,g)=>s+(parseFloat(g.monto)||0),0);
+  }catch(e){}
+  const ganancia = totalIng - gastos;
+
+  document.getElementById('dashIngresos').textContent = '$'+totalIng.toLocaleString('es-AR');
+  document.getElementById('dashGastos').textContent = '$'+gastos.toLocaleString('es-AR');
+  const ganEl = document.getElementById('dashGanancia');
+  ganEl.textContent = '$'+ganancia.toLocaleString('es-AR');
+  ganEl.style.color = ganancia>=0 ? 'var(--gold)' : 'var(--red)';
+
+  const pctCortes = totalIng>0 ? Math.round((ingCortes/totalIng)*100) : 0;
+  const pctProd = 100-pctCortes;
+  const donut = document.getElementById('dashDonut');
+  donut.style.background = totalIng>0
+    ? `conic-gradient(var(--gold) 0% ${pctCortes}%, var(--diamante) ${pctCortes}% 100%)`
+    : 'rgba(255,255,255,.05)';
+  donut.innerHTML = `<div style="position:absolute;inset:24px;background:var(--card);border-radius:50%"></div>`;
+  document.getElementById('dashDonutLegend').innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;font-size:12px"><div style="width:10px;height:10px;border-radius:2px;background:var(--gold)"></div>Cortes — ${pctCortes}% ($${ingCortes.toLocaleString('es-AR')})</div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:12px"><div style="width:10px;height:10px;border-radius:2px;background:var(--diamante)"></div>Productos — ${pctProd}% ($${ingProductos.toLocaleString('es-AR')})</div>
+  `;
+
+  const dias=['Lu','Ma','Mi','Ju','Vi','Sa'];
+  const porDia = dias.map((d,i)=>{
+    const fechaDia = new Date(ini); fechaDia.setDate(fechaDia.getDate()+i);
+    const diaStr = fechaDia.toISOString().split('T')[0];
+    const ingDia = psSem.filter(p=>p.fecha===diaStr).reduce((s,p)=>s+p.precio,0)
+                 + ventasSem.filter(v=>v.fecha===diaStr).reduce((s,v)=>s+v.monto,0);
+    return {dia:d, monto:ingDia};
+  });
+  const maxDia = Math.max(...porDia.map(d=>d.monto),1);
+  document.getElementById('dashBarsDias').innerHTML = porDia.map(d=>`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="width:24px;font-size:11px;color:var(--gray);flex-shrink:0">${d.dia}</div>
+      <div style="flex:1;background:#0d0d0d;border-radius:6px;overflow:hidden;height:22px">
+        <div style="height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));width:${(d.monto/maxDia*100)}%;display:flex;align-items:center;justify-content:flex-end;padding-right:8px">
+          ${d.monto>0?`<span style="font-size:10px;font-weight:700;color:#000">$${d.monto.toLocaleString('es-AR')}</span>`:''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  const contProd = document.getElementById('dashProductos');
+  if(!ventasSem.length){
+    contProd.innerHTML = '<div class="empty"><div class="empty-txt">Sin ventas de productos esta semana</div></div>';
+  } else {
+    const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    contProd.innerHTML = ventasSem.map(v=>{
+      const d = new Date(v.fecha+'T12:00:00');
+      return `<div class="fin-gasto-item">
+        <div class="fin-gi-desc">${v.descripcion}</div>
+        <div class="fin-gi-fecha">${d.getDate()} ${ms[d.getMonth()]}</div>
+        <div class="fin-gi-monto">$${Math.round(v.monto).toLocaleString('es-AR')}</div>
+      </div>`;
+    }).join('');
+  }
 }
 
 </script>
