@@ -204,7 +204,7 @@ select option{background:#111}
       <div class="form-group" style="grid-column:1/-1">
         <label style="font-size:11px;letter-spacing:2px;color:var(--gold);font-weight:700">BARBERO</label>
         <select id="fBarbero">
-          <option value="">Sin asignar</option><option>Ivo</option><option>Gonza</option><option>Bruno</option><option>Marcos</option>
+          <option value="">Sin asignar</option><option>Ivo</option><option>Gonza</option><option>Santi</option><option>Marcos</option>
         </select>
       </div>
     </div>
@@ -380,6 +380,17 @@ select option{background:#111}
       <div class="sec-title">Registrar Gasto</div>
       <div class="fin-form">
         <div class="form-group">
+          <label>Sector</label>
+          <select id="gSector">
+            <option value="Alquiler">🏠 Alquiler</option>
+            <option value="Servicios">💡 Servicios (luz, agua, internet)</option>
+            <option value="Insumos">🧴 Insumos y productos</option>
+            <option value="Mantenimiento">🔧 Mantenimiento y equipos</option>
+            <option value="Publicidad">📣 Publicidad</option>
+            <option value="Otros" selected>📦 Otros</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label>Descripción</label>
           <input type="text" id="gDesc" placeholder="Ej: productos, alquiler, luz…" maxlength="80">
         </div>
@@ -548,6 +559,8 @@ select option{background:#111}
     <div class="stat" style="background:rgba(192,57,43,.08)"><div class="stat-num" style="color:#e74c3c" id="dashGastos">$0</div><div class="stat-lbl">Total Gastos</div></div>
     <div class="stat" style="background:rgba(212,175,55,.08)"><div class="stat-num" id="dashGanancia">$0</div><div class="stat-lbl">Ganancia</div></div>
   </div>
+  <div class="sec-title" style="margin-top:24px">Gastos por Sector</div>
+  <div class="form-card" id="dashSectores"></div>
   <div class="sec-title" style="margin-top:24px">Gastos de la Semana</div>
   <div id="dashGastosLista" class="clients-list"></div>
   <div class="sec-title" style="margin-top:24px">Ingreso por Categoría</div>
@@ -573,7 +586,7 @@ select option{background:#111}
       <label>Barbero</label>
       <select id="editarBarbero" style="background:#0d0d0d;border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:'Montserrat',sans-serif;font-size:13px;padding:10px 13px;width:100%">
         <option value="">Sin asignar</option>
-        <option>Ivo</option><option>Gonza</option><option>Bruno</option><option>Marcos</option>
+        <option>Ivo</option><option>Gonza</option><option>Santi</option><option>Marcos</option>
       </select>
     </div>
 
@@ -629,8 +642,8 @@ select option{background:#111}
           <div class="mps-btn" onclick="selBarberoModal('Gonza')" id="mbarb_Gonza">
             <div style="font-size:16px">✂️</div><div class="mp-name">Gonza</div>
           </div>
-          <div class="mps-btn" onclick="selBarberoModal('Bruno')" id="mbarb_Bruno">
-            <div style="font-size:16px">✂️</div><div class="mp-name">Bruno</div>
+          <div class="mps-btn" onclick="selBarberoModal('Santi')" id="mbarb_Santi">
+            <div style="font-size:16px">✂️</div><div class="mp-name">Santi</div>
           </div>
           <div class="mps-btn" onclick="selBarberoModal('Marcos')" id="mbarb_Marcos">
             <div style="font-size:16px">✂️</div><div class="mp-name">Marcos</div>
@@ -673,9 +686,9 @@ const PRECIOS_ANTERIORES = [
   {id:'cb_llegada',      nombre:'Corte + Barba',   tipo:'Orden llegada', barbero:'todos', precio:17000},
   {id:'cc_llegada',      nombre:'Corte + Cera',    tipo:'Orden llegada', barbero:'todos', precio:27000},
   {id:'cera_llegada',    nombre:'Cera',            tipo:'Orden llegada', barbero:'todos', precio:15000},
-  {id:'corte_turno_gb',  nombre:'Corte',           tipo:'Con turno',     barbero:'Gonza/Bruno/Marcos', precio:17000},
-  {id:'cc_turno_gb',     nombre:'Corte + Cera',    tipo:'Con turno',     barbero:'Gonza/Bruno/Marcos', precio:30000},
-  {id:'cb_turno_gb',     nombre:'Corte + Barba',   tipo:'Con turno',     barbero:'Gonza/Bruno/Marcos', precio:22000},
+  {id:'corte_turno_gb',  nombre:'Corte',           tipo:'Con turno',     barbero:'Gonza/Santi/Marcos', precio:17000},
+  {id:'cc_turno_gb',     nombre:'Corte + Cera',    tipo:'Con turno',     barbero:'Gonza/Santi/Marcos', precio:30000},
+  {id:'cb_turno_gb',     nombre:'Corte + Barba',   tipo:'Con turno',     barbero:'Gonza/Santi/Marcos', precio:22000},
   {id:'corte_ivo',       nombre:'Corte',           tipo:'Con turno',     barbero:'Ivo', precio:20000},
   {id:'cb_ivo',          nombre:'Corte + Barba',   tipo:'Con turno',     barbero:'Ivo', precio:22000},
 ];
@@ -688,7 +701,15 @@ function precioDeCliente(c){ return getPrecio(c.servicio)||14000; }
 const KEY='bressati_clientes_v3';
 const SB_URL='https://uloxovtuudgdtxoltmqj.supabase.co';
 const SB_KEY='sb_publishable_lzmRs9XeYofIUmVq9FQEpA_g55F5Nf8';
-let clientes=JSON.parse(localStorage.getItem(KEY)||'[]');
+const RENOMBRES_BARBERO={'Bruno':'Santi'};
+function normalizarBarberos(lista){
+  (lista||[]).forEach(c=>{
+    if(RENOMBRES_BARBERO[c.barbero]) c.barbero=RENOMBRES_BARBERO[c.barbero];
+    (c.precios||[]).forEach(p=>{ if(p&&RENOMBRES_BARBERO[p.barbero]) p.barbero=RENOMBRES_BARBERO[p.barbero]; });
+  });
+  return lista;
+}
+let clientes=normalizarBarberos(JSON.parse(localStorage.getItem(KEY)||'[]'));
 let filtro='todos',semOff=0;
 function save(){localStorage.setItem(KEY,JSON.stringify(clientes))}
 
@@ -707,7 +728,7 @@ async function sbFetch(path,opts){
 async function cargarDesdeNube(){
   if(clientes.length>0) renderAll();
   const data=await sbFetch('clientes?order=creado.desc&limit=1000');
-  if(data&&data.length>=0){clientes=data;localStorage.setItem(KEY,JSON.stringify(clientes));}
+  if(data&&data.length>=0){clientes=normalizarBarberos(data);localStorage.setItem(KEY,JSON.stringify(clientes));}
   renderAll();
 }
 
@@ -846,7 +867,7 @@ function selPago(tipo){
 
 function selBarberoModal(nombre){
   document.getElementById('fBarberoModal').value=nombre;
-  ['Ivo','Gonza','Bruno','Marcos'].forEach(b=>{
+  ['Ivo','Gonza','Santi','Marcos'].forEach(b=>{
     const btn=document.getElementById('mbarb_'+b);
     if(!btn)return;
     if(b===nombre){
@@ -1033,7 +1054,7 @@ function abrirModal(id,perdido,mostrarSelector){
     sel.style.display='block';
     const barbActual=c.barbero||'';
     document.getElementById('fBarberoModal').value=barbActual;
-    ['Ivo','Gonza','Bruno','Marcos'].forEach(b=>{
+    ['Ivo','Gonza','Santi','Marcos'].forEach(b=>{
       const btn=document.getElementById('mbarb_'+b);
       if(!btn)return;
       if(b===barbActual){btn.style.borderColor='var(--gold)';btn.style.background='rgba(212,175,55,.12)';}
@@ -1256,7 +1277,7 @@ function renderPrecios(){
 }
 
 function renderRanking(){
-  const barberos=['Ivo','Gonza','Bruno','Marcos'];
+  const barberos=['Ivo','Gonza','Santi','Marcos'];
   const now=new Date(),m=now.getMonth(),y=now.getFullYear();
   const hoy=hoyStr();
   const [semIni,semFin]=getWeekRange(0);
@@ -1277,7 +1298,7 @@ function renderRanking(){
 
   const medallasMes=['🥇','🥈','🥉','4️⃣'];
   const clsMes=['top1','top2','top3',''];
-  const iconoBarbero={'Ivo':'👑','Gonza':'✂️','Bruno':'✂️','Marcos':'✂️'};
+  const iconoBarbero={'Ivo':'👑','Gonza':'✂️','Santi':'✂️','Marcos':'✂️'};
 
   const mkBarbList=(lista,campo,suf,medallasArr,clsArr)=>lista.map((b,i)=>{
     const v=b[campo];
@@ -1325,7 +1346,7 @@ function renderRanking(){
 
 function renderBarberos(){
   document.getElementById('weekLabel').textContent=weekLabel(semOff);
-  const barberos=['Ivo','Gonza','Bruno','Marcos'];
+  const barberos=['Ivo','Gonza','Santi','Marcos'];
   let totSem=0;
   document.getElementById('barbGrid').innerHTML=barberos.map(b=>{
     const mis=clientes.filter(c=>c.barbero===b);
@@ -1555,6 +1576,35 @@ async function renderFinanzas(){
   await renderListaGastos();
 }
 
+// ══ SECTORES DE GASTOS ══
+const SECTORES_GASTO=[
+  {id:'Alquiler',emoji:'🏠',color:'#D4AF37'},
+  {id:'Servicios',emoji:'💡',color:'#7ec8e3'},
+  {id:'Insumos',emoji:'🧴',color:'#27ae60'},
+  {id:'Mantenimiento',emoji:'🔧',color:'#e67e22'},
+  {id:'Publicidad',emoji:'📣',color:'#9b59b6'},
+  {id:'Otros',emoji:'📦',color:'#888'}
+];
+// El sector se guarda adelante de la descripción: "[Insumos] Navajas"
+function parseGasto(desc){
+  desc=desc||'';
+  const m=desc.match(/^\[([^\]]+)\]\s*(.*)$/);
+  if(m&&SECTORES_GASTO.some(x=>x.id===m[1])) return {sector:m[1],texto:m[2]||'Gasto'};
+  const t=desc.toLowerCase();
+  let sector='Otros';
+  if(/alquiler/.test(t)) sector='Alquiler';
+  else if(/\bluz\b|\bagua\b|\bgas\b|internet|wifi|epec|cooperativa|tel[eé]fono/.test(t)) sector='Servicios';
+  else if(/producto|insumo|navaja|cera|shampoo|gel|toalla|capa|hoja|alcohol|limpieza/.test(t)) sector='Insumos';
+  else if(/arreglo|repara|mantenim|m[aá]quina|equipo|silla|espejo|pintura/.test(t)) sector='Mantenimiento';
+  else if(/publicidad|anuncio|instagram|facebook|meta|flyer|cartel/.test(t)) sector='Publicidad';
+  return {sector,texto:desc||'Gasto'};
+}
+function infoSector(id){ return SECTORES_GASTO.find(x=>x.id===id)||SECTORES_GASTO[SECTORES_GASTO.length-1]; }
+function badgeSector(id){
+  const s=infoSector(id);
+  return `<span style="background:${s.color}22;color:${s.color};border-radius:4px;padding:1px 6px;font-size:9px;font-weight:700;letter-spacing:.5px">${s.emoji} ${s.id.toUpperCase()}</span>`;
+}
+
 async function renderListaGastos(){
   const cont=document.getElementById('listaGastos');
   cont.innerHTML='<div class="empty"><div class="empty-txt">Cargando…</div></div>';
@@ -1575,17 +1625,18 @@ async function renderListaGastos(){
     cont.innerHTML=items.map(g=>{
       const d=new Date(g.fecha+'T00:00:00');
       const esIngreso=g._tipo==='ingreso';
+      const pg=esIngreso?null:parseGasto(g.descripcion);
       const esTrabEsp=esIngreso&&g.descripcion&&g.descripcion.startsWith('✨');
       let borde=esTrabEsp?'border-color:rgba(126,200,227,.35);background:rgba(126,200,227,.04)':esIngreso?'border-color:rgba(39,174,96,.25);background:rgba(39,174,96,.04)':'';
       let badge=esTrabEsp
         ?'<span style="background:rgba(126,200,227,.15);color:var(--diamante);border-radius:4px;padding:1px 6px;font-size:9px;font-weight:700">✨ TRAB. ESP.</span>'
         :esIngreso
           ?'<span style="background:rgba(39,174,96,.12);color:var(--green);border-radius:4px;padding:1px 6px;font-size:9px;font-weight:700">PRODUCTO</span>'
-          :'<span style="background:rgba(255,255,255,.06);color:var(--gray);border-radius:4px;padding:1px 6px;font-size:9px;font-weight:700">GASTO</span>';
+          :badgeSector(pg.sector);
       const colorMonto=esTrabEsp?'color:var(--diamante)':esIngreso?'color:var(--green)':'';
       return`<div class="fin-gasto-item" style="${borde};flex-wrap:wrap;gap:4px">
         <div style="flex:1;min-width:0">
-          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px">${g.descripcion}</div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px">${esIngreso?g.descripcion:pg.texto}</div>
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
             ${badge}
             <span class="fin-gi-fecha">${d.getDate()} ${ms[d.getMonth()]} ${d.getFullYear()}</span>
@@ -1613,6 +1664,7 @@ async function eliminarVenta(id){
 
 async function guardarGasto(){
   const desc=document.getElementById('gDesc').value.trim();
+  const sector=(document.getElementById('gSector')||{}).value||'Otros';
   const monto=parseFloat(document.getElementById('gMonto').value);
   const fecha=document.getElementById('gFecha').value;
   const msg=document.getElementById('gMsg');
@@ -1621,7 +1673,7 @@ async function guardarGasto(){
   if(!fecha){msg.textContent='⚠ Seleccioná una fecha';msg.style.color='var(--gray)';return;}
   msg.textContent='Guardando…';msg.style.color='var(--gray)';
   mostrarSync('☁️ Guardando gasto...');
-  const res=await sbFetch('gastos',{method:'POST',body:JSON.stringify({descripcion:desc,monto,fecha})});
+  const res=await sbFetch('gastos',{method:'POST',body:JSON.stringify({descripcion:'['+sector+'] '+desc,monto,fecha})});
   ocultarSync();
   if(res!==null){
     document.getElementById('gDesc').value='';
@@ -1762,7 +1814,7 @@ function pagoscambiarSemana(dir){
 function pagoschangiarSemana(dir){ pagoscambiarSemana(dir); }
 
 async function renderPagos(){
-  const barberos=['Ivo','Gonza','Bruno','Marcos'];
+  const barberos=['Ivo','Gonza','Santi','Marcos'];
   const [ini,fin]=getWeekRange(pagosSemOff);
   document.getElementById('pagosWeekLabel').textContent=weekLabel(pagosSemOff);
   const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -1802,7 +1854,7 @@ async function renderPagos(){
   document.getElementById('pagosTotalSem').textContent='$'+totalBarberos.toLocaleString('es-AR');
   document.getElementById('pagosBarberia').textContent='$'+mitadBarberia.toLocaleString('es-AR');
 
-  const iconos={Ivo:'👑',Gonza:'✂️',Bruno:'✂️',Marcos:'✂️'};
+  const iconos={Ivo:'👑',Gonza:'✂️',Santi:'✂️',Marcos:'✂️'};
 
   document.getElementById('pagosResumenBarberos').innerHTML=items.map(b=>{
     const mis=clientes.filter(c=>c.barbero===b.nombre);
@@ -1921,10 +1973,30 @@ async function renderDashboard(){
   document.getElementById('dashGastosLista').innerHTML = gastosSem.length
     ? gastosSem.map(g=>{
         const d=new Date(g.fecha+'T12:00:00');
+        const pg=parseGasto(g.descripcion);
         return `<div class="fin-gasto-item">
-          <div class="fin-gi-desc">${g.descripcion||'Gasto'}</div>
+          <div class="fin-gi-desc">${pg.texto} <span style="margin-left:4px">${badgeSector(pg.sector)}</span></div>
           <div class="fin-gi-fecha">${d.getDate()} ${msG[d.getMonth()]}</div>
           <div class="fin-gi-monto" style="color:var(--red)">−$${Math.round(parseFloat(g.monto)||0).toLocaleString('es-AR')}</div>
+        </div>`;}).join('')
+    : '<div class="empty"><div class="empty-txt">Sin gastos cargados esta semana</div></div>';
+
+  const porSector={};
+  gastosSem.forEach(g=>{ const sc=parseGasto(g.descripcion).sector; porSector[sc]=(porSector[sc]||0)+(parseFloat(g.monto)||0); });
+  const filasSector=SECTORES_GASTO.filter(x=>porSector[x.id]>0).sort((a,b)=>porSector[b.id]-porSector[a.id]);
+  const maxSector=Math.max(...filasSector.map(x=>porSector[x.id]),1);
+  document.getElementById('dashSectores').innerHTML = filasSector.length
+    ? filasSector.map(x=>{
+        const monto=porSector[x.id];
+        const pct=gastos>0?Math.round(monto/gastos*100):0;
+        return `<div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+            <span>${x.emoji} ${x.id}</span>
+            <span style="color:var(--gray)">${pct}% · <strong style="color:var(--white)">$${Math.round(monto).toLocaleString('es-AR')}</strong></span>
+          </div>
+          <div style="background:#0d0d0d;border-radius:6px;overflow:hidden;height:12px">
+            <div style="height:100%;background:${x.color};width:${monto/maxSector*100}%"></div>
+          </div>
         </div>`;}).join('')
     : '<div class="empty"><div class="empty-txt">Sin gastos cargados esta semana</div></div>';
   const ganancia = totalIng - gastos;
